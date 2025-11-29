@@ -99,30 +99,32 @@
                     <h2 class="feature-title" style="margin: 0;">Live Data Pipeline Status</h2>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
-                    <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                <div id="live-status-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <!-- DATAOPS_LIVE_STATUS:START -->
+                    <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;" data-template="status-card">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <h4 style="margin: 0; color: var(--color-charcoal); font-size: 1rem;">Collection Worker</h4>
-                            <span class="status-badge status-running">
-                                <span class="material-icons" style="font-size: 1rem;">play_circle</span>
-                                Running
+                            <h4 style="margin: 0; color: var(--color-charcoal); font-size: 1rem;" data-slot="title">Collection Worker</h4>
+                            <span class="status-badge status-running" data-slot="status-badge">
+                                <span class="material-icons" style="font-size: 1rem;" data-slot="status-icon">play_circle</span>
+                                <span data-slot="status-text">Running</span>
                             </span>
                         </div>
-                        <p style="margin: 0; color: var(--color-graphite); font-size: 0.875rem;">Actively fetching from Adzuna API</p>
-                        <p style="margin: 0.5rem 0 0 0; color: var(--color-silver); font-size: 0.75rem;">Last run: 2 minutes ago</p>
+                        <p style="margin: 0; color: var(--color-graphite); font-size: 0.875rem;" data-slot="description">Actively fetching from Adzuna API</p>
+                        <p style="margin: 0.5rem 0 0 0; color: var(--color-silver); font-size: 0.75rem;" data-slot="timestamp">Last run: 2 minutes ago</p>
                     </div>
 
                     <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                            <h4 style="margin: 0; color: var(--color-charcoal); font-size: 1rem;">Processing Worker</h4>
-                            <span class="status-badge status-idle">
-                                <span class="material-icons" style="font-size: 1rem;">schedule</span>
-                                Idle
+                            <h4 style="margin: 0; color: var(--color-charcoal); font-size: 1rem;" data-slot="title">Processing Worker</h4>
+                            <span class="status-badge status-idle" data-slot="status-badge">
+                                <span class="material-icons" style="font-size: 1rem;" data-slot="status-icon">schedule</span>
+                                <span data-slot="status-text">Idle</span>
                             </span>
                         </div>
-                        <p style="margin: 0; color: var(--color-graphite); font-size: 0.875rem;">Waiting for new data</p>
-                        <p style="margin: 0.5rem 0 0 0; color: var(--color-silver); font-size: 0.75rem;">Last run: 1 hour ago</p>
+                        <p style="margin: 0; color: var(--color-graphite); font-size: 0.875rem;" data-slot="description">Waiting for new data</p>
+                        <p style="margin: 0.5rem 0 0 0; color: var(--color-silver); font-size: 0.75rem;" data-slot="timestamp">Last run: 1 hour ago</p>
                     </div>
+                    <!-- DATAOPS_LIVE_STATUS:END -->
                 </div>
             </div>
 
@@ -143,23 +145,24 @@
                             <th>Rate Limit</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
+                    <tbody id="source-health-body">
+                        <!-- DATAOPS_SOURCE_HEALTH:START -->
+                        <tr data-template="source-row">
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <span class="material-icons" style="color: var(--color-cosmic-purple);">api</span>
-                                    <strong>Adzuna API</strong>
+                                    <span class="material-icons" style="color: var(--color-cosmic-purple);" data-slot="icon">api</span>
+                                    <strong data-slot="name">Adzuna API</strong>
                                 </div>
                             </td>
                             <td>
-                                <span class="status-badge status-online">
+                                <span class="status-badge status-online" data-slot="status-badge">
                                     <span class="material-icons" style="font-size: 0.875rem;">check_circle</span>
-                                    Online
+                                    <span data-slot="status-text">Online</span>
                                 </span>
                             </td>
-                            <td>2 minutes ago</td>
-                            <td>234ms</td>
-                            <td>850 / 1000 req/day</td>
+                            <td data-slot="last-check">2 minutes ago</td>
+                            <td data-slot="response-time">234ms</td>
+                            <td data-slot="rate-limit">850 / 1000 req/day</td>
                         </tr>
                         <tr>
                             <td>
@@ -178,6 +181,7 @@
                             <td>-</td>
                             <td>-</td>
                         </tr>
+                        <!-- DATAOPS_SOURCE_HEALTH:END -->
                     </tbody>
                 </table>
             </div>
@@ -201,15 +205,16 @@
                             <th>Logs</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">col_2024_001</code></td>
-                            <td>Adzuna API</td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td>1,247</td>
-                            <td>2m 34s</td>
-                            <td>2024-01-15 09:30</td>
-                            <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button></td>
+                    <tbody id="collection-history-body">
+                        <!-- DATAOPS_COLLECTION_HISTORY:START -->
+                        <tr data-template="collection-row">
+                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);" data-slot="job-id">col_2024_001</code></td>
+                            <td data-slot="source">Adzuna API</td>
+                            <td><span class="status-badge status-completed" data-slot="status-badge">Completed</span></td>
+                            <td data-slot="records">1,247</td>
+                            <td data-slot="duration">2m 34s</td>
+                            <td data-slot="started">2024-01-15 09:30</td>
+                            <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" data-slot="log-button">View</button></td>
                         </tr>
                         <tr>
                             <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">col_2024_002</code></td>
@@ -238,6 +243,7 @@
                             <td>2024-01-14 18:00</td>
                             <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">View</button></td>
                         </tr>
+                        <!-- DATAOPS_COLLECTION_HISTORY:END -->
                     </tbody>
                 </table>
             </div>
@@ -261,15 +267,16 @@
                             <th>Output</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">cons_2024_001</code></td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td>3,854</td>
-                            <td>3,738</td>
-                            <td>45s</td>
-                            <td>2024-01-15 10:15</td>
-                            <td><a href="#" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem; text-decoration: none;">Download</a></td>
+                    <tbody id="processing-history-body">
+                        <!-- DATAOPS_PROCESSING_HISTORY:START -->
+                        <tr data-template="processing-row">
+                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);" data-slot="job-id">cons_2024_001</code></td>
+                            <td><span class="status-badge status-completed" data-slot="status-badge">Completed</span></td>
+                            <td data-slot="records-in">3,854</td>
+                            <td data-slot="records-out">3,738</td>
+                            <td data-slot="duration">45s</td>
+                            <td data-slot="completed">2024-01-15 10:15</td>
+                            <td data-slot="output-cell"><a href="#" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem; text-decoration: none;" data-slot="output-link">Download</a></td>
                         </tr>
                         <tr>
                             <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">cons_2024_002</code></td>
@@ -289,6 +296,7 @@
                             <td>2024-01-14 18:45</td>
                             <td><a href="#" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem; text-decoration: none;">Download</a></td>
                         </tr>
+                        <!-- DATAOPS_PROCESSING_HISTORY:END -->
                     </tbody>
                 </table>
             </div>

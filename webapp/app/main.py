@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .dataops_renderer import render_dataops_page
+
 # Initialize FastAPI app
 app = FastAPI(
     title="Jobfit",
@@ -19,6 +21,7 @@ app = FastAPI(
 
 # Path to static files
 STATIC_DIR = Path(__file__).parent.parent / "static"
+DATAOPS_TEMPLATE = STATIC_DIR / "dataops.html"
 
 # Mount static files for CSS, JS, images, etc.
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -63,7 +66,8 @@ async def trends():
 @app.get("/dataops.html", response_class=HTMLResponse)
 async def dataops():
     """Serve data operations hub page"""
-    return FileResponse(STATIC_DIR / "dataops.html")
+    html = render_dataops_page(DATAOPS_TEMPLATE)
+    return HTMLResponse(content=html)
 
 
 @app.get("/mlops", response_class=HTMLResponse)
