@@ -1,0 +1,11 @@
+{
+  "collection": {
+    "status": "IDLE",
+    "updated_at": "2025-11-29T20:29:48.294231",
+    "details": {
+      "mode": "remoteok",
+      "last_run": "2025-11-29T20:29:48.108298",
+      "jobs_collected": 0
+    }
+  }
+}

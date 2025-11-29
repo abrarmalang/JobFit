@@ -1,0 +1,27 @@
+{
+  "Adzuna": {
+    "status": "ONLINE",
+    "last_check": "2025-11-29T20:29:41.866980",
+    "response_time_ms": 1379.686,
+    "rate_limit_used": 5,
+    "rate_limit_total": 1000,
+    "details": {
+      "profile": "UK - Mixed Tech Roles (keyword-free)"
+    }
+  },
+  "RemoteOK": {
+    "status": "ONLINE",
+    "last_check": "2025-11-29T20:29:48.293878",
+    "response_time_ms": 182.48700000000002,
+    "rate_limit_used": null,
+    "rate_limit_total": null,
+    "details": {
+      "filter_tags": [
+        "python",
+        "react",
+        "javascript",
+        "engineer"
+      ]
+    }
+  }
+}
