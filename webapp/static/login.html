@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Jobfit</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: var(--color-ghost);
+        }
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: var(--space-10) var(--space-8);
+            background-color: var(--color-white);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--color-cloud);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-8);
+        }
+        .login-header .nav-logo {
+            font-size: 2rem;
+        }
+        .login-form .input-group {
+            margin-bottom: var(--space-5);
+        }
+        .login-form label {
+            font-weight: 600;
+            color: var(--color-obsidian);
+            display: block;
+            margin-bottom: var(--space-2);
+        }
+        .login-form input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--color-silver);
+            background-color: var(--color-white);
+            font-size: 1rem;
+            color: var(--color-charcoal);
+            transition: all 0.3s var(--transition-smooth);
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--color-cosmic-purple);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .login-button {
+            width: 100%;
+            justify-content: center;
+            margin-top: var(--space-4);
+            padding: var(--space-4);
+            font-size: 1.125rem;
+        }
+        .login-footer {
+            margin-top: var(--space-6);
+            text-align: center;
+            font-size: 0.9375rem;
+        }
+        .login-footer a {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body style="background-color: var(--color-ghost);">
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">JOBFIT</a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="designsystem.html" class="nav-link">Design System</a></li>
+                <li><a href="trends.html" class="nav-link">Trends</a></li>
+                <li><a href="login.html" class="nav-link active">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main style="padding-top: 80px; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="login-container">
+            <div class="login-header">
+                <h2 class="section-title">Sign In</h2>
+            </div>
+
+            <form class="login-form" onsubmit="event.preventDefault(); alert('Login form submitted!');">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-button">Sign In</button>
+            </form>
+
+            <div class="login-footer">
+                <p><a href="#">Forgot Password?</a></p>
+                <p>Don't have an account? <a href="#">Sign Up</a></p>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

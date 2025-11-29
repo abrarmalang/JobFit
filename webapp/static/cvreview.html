@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Get AI-powered feedback on your CV. Improve your resume with intelligent analysis and actionable suggestions.">
+    <title>CV Review - Jobfit</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">JOBFIT</a>
+            <ul class="nav-links">
+                <li><a href="jobs.html" class="nav-link">Job Search</a></li>
+                <li><a href="cvreview.html" class="nav-link active">CV Review</a></li>
+                <li><a href="trends.html" class="nav-link">Trends</a></li>
+                <li><a href="dataops.html" class="nav-link">Data Ops</a></li>
+                <li><a href="mlops.html" class="nav-link">ML Ops</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="hero" style="min-height: 40vh; padding-top: 120px; padding-bottom: 60px;">
+        <div class="hero-grid"></div>
+        <div class="container">
+            <div class="hero-content" style="grid-template-columns: 1fr; text-align: center;">
+                <div class="hero-text">
+                    <h1 class="hero-title" style="margin-bottom: 1.5rem;">
+                        Optimize Your <span class="hero-title-gradient">CV with AI</span>
+                    </h1>
+                    <p class="hero-description" style="margin: 0 auto 2rem; max-width: 700px;">
+                        Get instant AI-powered feedback on your resume. Discover your ATS readiness score, extracted skills, and actionable improvement suggestions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="features" style="padding-top: 3rem;" id="uploadSection">
+        <div class="container">
+            <div style="max-width: 700px; margin: 0 auto;">
+                <div style="padding: 3rem; background: white; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="border: 3px dashed var(--color-cloud); border-radius: 1rem; padding: 4rem 2rem; transition: all 0.3s; cursor: pointer;" id="dropZone"
+                         onmouseover="this.style.borderColor='var(--color-cosmic-purple)'; this.style.background='rgba(102,126,234,0.05)';"
+                         onmouseout="this.style.borderColor='var(--color-cloud)'; this.style.background='transparent';"
+                         onclick="document.getElementById('cvFile').click();">
+                        <div class="material-icons" style="font-size: 6rem; color: var(--color-cosmic-purple); margin-bottom: 1.5rem;">description</div>
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1.75rem;">Upload Your CV</h3>
+                        <p style="color: var(--color-graphite); margin-bottom: 2rem; font-size: 1.125rem;">Drag and drop your file or click to browse</p>
+                        <p style="font-size: 0.875rem; color: var(--color-silver); margin-bottom: 1rem;">Supported formats: PDF, DOCX (Max 5MB)</p>
+                        <input type="file" id="cvFile" accept=".pdf,.docx" style="display: none;" onchange="analyzCV()">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 2rem; justify-content: center; font-size: 1.125rem;" onclick="document.getElementById('cvFile').click();">
+                        <span class="material-icons">cloud_upload</span>
+                        <span>Choose File to Analyze</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analysis Results Section -->
+    <section class="features" style="padding-top: 3rem; display: none;" id="resultsSection">
+        <div class="container">
+            <div style="margin-bottom: 3rem; text-align: center;">
+                <h2 class="section-title" style="margin-bottom: 0.5rem;">CV Analysis Results</h2>
+                <p class="section-description">AI-powered insights for your resume</p>
+            </div>
+
+            <!-- Overall Score -->
+            <div style="max-width: 800px; margin: 0 auto 3rem;">
+                <div class="feature-card" style="padding: 3rem; text-align: center;">
+                    <h3 style="font-size: 1rem; color: var(--color-graphite); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.1em;">Overall ATS Readiness Score</h3>
+                    <div style="position: relative; width: 200px; height: 200px; margin: 0 auto 2rem;">
+                        <svg width="200" height="200" style="transform: rotate(-90deg);">
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-cloud)" stroke-width="20"></circle>
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="url(#gradient)" stroke-width="20"
+                                    stroke-dasharray="502" stroke-dashoffset="125" stroke-linecap="round"></circle>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667EEA;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FD79A8;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            <div style="font-size: 3.5rem; font-weight: 800; background: var(--gradient-cosmic); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">75</div>
+                            <div style="font-size: 1rem; color: var(--color-graphite); margin-top: 0.25rem;">/100</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--color-graphite); font-size: 1.125rem; max-width: 500px; margin: 0 auto;">
+                        Your CV has <strong>good ATS compatibility</strong> with room for improvement in quantifying achievements and formatting consistency.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Skills Extracted -->
+            <div style="max-width: 900px; margin: 0 auto 3rem;">
+                <div class="feature-card" style="padding: 2.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">psychology</div>
+                        <h3 class="feature-title" style="margin: 0;">Key Skills Extracted</h3>
+                    </div>
+                    <p style="color: var(--color-graphite); margin-bottom: 1.5rem;">Our AI identified these skills from your CV:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                        <span style="background: var(--gradient-cosmic); color: white; padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Python</span>
+                        <span style="background: var(--gradient-cosmic); color: white; padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Machine Learning</span>
+                        <span style="background: var(--gradient-cosmic); color: white; padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Django</span>
+                        <span style="background: var(--gradient-cosmic); color: white; padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">FastAPI</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">SQL</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">AWS</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Docker</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Git</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">REST APIs</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">PostgreSQL</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">Agile</span>
+                        <span style="background: rgba(102,126,234,0.15); color: var(--color-cosmic-purple); padding: 0.6rem 1.2rem; border-radius: 2rem; font-weight: 600; font-size: 0.9375rem;">CI/CD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions for Improvement -->
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="feature-card" style="padding: 2.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">auto_fix_high</div>
+                        <h3 class="feature-title" style="margin: 0;">Suggestions for Improvement</h3>
+                    </div>
+                    <p style="color: var(--color-graphite); margin-bottom: 2rem;">Actionable recommendations to enhance your CV:</p>
+
+                    <div style="display: grid; gap: 1.5rem;">
+                        <!-- Suggestion 1 -->
+                        <div style="display: flex; gap: 1rem; padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-warning);">
+                            <div class="material-icons" style="color: var(--color-warning); font-size: 1.5rem;">trending_up</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: var(--color-obsidian); font-size: 1.125rem;">Quantify Your Achievements</h4>
+                                <p style="margin: 0; color: var(--color-graphite); line-height: 1.6;">
+                                    Add specific metrics and numbers to your accomplishments. For example, instead of "Improved system performance," use "Improved system performance by 40%, reducing API response time from 500ms to 300ms."
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Suggestion 2 -->
+                        <div style="display: flex; gap: 1rem; padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-info);">
+                            <div class="material-icons" style="color: var(--color-info); font-size: 1.5rem;">format_align_left</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: var(--color-obsidian); font-size: 1.125rem;">Add a Professional Summary</h4>
+                                <p style="margin: 0; color: var(--color-graphite); line-height: 1.6;">
+                                    Include a 3-4 sentence summary at the top highlighting your experience level, key skills, and what you're looking for. This helps ATS systems and recruiters quickly understand your profile.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Suggestion 3 -->
+                        <div style="display: flex; gap: 1rem; padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-success);">
+                            <div class="material-icons" style="color: var(--color-success); font-size: 1.5rem;">check_circle</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: var(--color-obsidian); font-size: 1.125rem;">Use Action Verbs</h4>
+                                <p style="margin: 0; color: var(--color-graphite); line-height: 1.6;">
+                                    Start bullet points with strong action verbs like "Developed," "Implemented," "Led," or "Optimized" rather than passive phrases. This makes your contributions more impactful.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Suggestion 4 -->
+                        <div style="display: flex; gap: 1rem; padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-cosmic-purple);">
+                            <div class="material-icons" style="color: var(--color-cosmic-purple); font-size: 1.5rem;">extension</div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: var(--color-obsidian); font-size: 1.125rem;">Include Relevant Certifications</h4>
+                                <p style="margin: 0; color: var(--color-graphite); line-height: 1.6;">
+                                    If you have certifications (AWS, Azure, Google Cloud, etc.), create a dedicated section. These keywords boost ATS scores and demonstrate ongoing professional development.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="margin-top: 3rem; text-align: center;">
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="jobs.html" class="btn btn-primary" style="text-decoration: none;">
+                        <span class="material-icons">search</span>
+                        <span>Find Matching Jobs</span>
+                    </a>
+                    <button class="btn btn-outline" onclick="document.getElementById('uploadSection').scrollIntoView({behavior: 'smooth'}); document.getElementById('resultsSection').style.display='none';">
+                        <span class="material-icons">refresh</span>
+                        <span>Analyze Another CV</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 4rem;">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>JOBFIT</h3>
+                    <p>Next-generation AI career platform.<br>Powered by advanced machine learning.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="jobs.html">Job Search</a></li>
+                        <li><a href="cvreview.html">CV Review</a></li>
+                        <li><a href="trends.html">Job Trends</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dataops.html">Data Operations Hub</a></li>
+                        <li><a href="mlops.html">AI/ML Operations Hub</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="designsystem.html">Design System</a></li>
+                        <li><a href="/">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Jobfit. All rights reserved. Built with advanced machine learning.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function analyzCV() {
+            const fileInput = document.getElementById('cvFile');
+            if (fileInput.files.length > 0) {
+                // Show loading state
+                const dropZone = document.getElementById('dropZone');
+                dropZone.innerHTML = '<div class="material-icons" style="font-size: 4rem; color: var(--color-cosmic-purple); margin-bottom: 1rem; animation: rotate 2s linear infinite;">autorenew</div><h3>Analyzing your CV...</h3><p style="color: var(--color-graphite);">Our AI is extracting skills and generating insights</p>';
+
+                // Simulate AI processing
+                setTimeout(() => {
+                    document.getElementById('uploadSection').style.display = 'none';
+                    document.getElementById('resultsSection').style.display = 'block';
+                    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+                }, 2000);
+            }
+        }
+
+        // Drag and drop functionality
+        const dropZone = document.getElementById('dropZone');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--color-cosmic-purple)';
+            dropZone.style.background = 'rgba(102,126,234,0.05)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'var(--color-cloud)';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('cvFile').files = files;
+                analyzCV();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Market Trends - Jobfit</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .trends-header {
+            text-align: center;
+            padding: var(--space-10) var(--space-6);
+            background-color: var(--color-ghost);
+        }
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--space-8);
+            padding: var(--space-10) var(--space-6);
+        }
+        .trend-card {
+            background-color: var(--color-white);
+            border: 1px solid var(--color-cloud);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-6);
+        }
+        .trend-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-5);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">JOBFIT</a>
+            <ul class="nav-links">
+                <li><a href="jobs.html" class="nav-link">Job Search</a></li>
+                <li><a href="cvreview.html" class="nav-link">CV Review</a></li>
+                <li><a href="trends.html" class="nav-link active">Trends</a></li>
+                <li><a href="dataops.html" class="nav-link">Data Ops</a></li>
+                <li><a href="mlops.html" class="nav-link">ML Ops</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main style="padding-top: 80px;">
+        <div class="trends-header">
+            <h1 class="section-title">Job Market <span class="text-gradient">Insights</span></h1>
+            <p class="section-description">Data-driven analysis of the latest trends in the tech industry.</p>
+        </div>
+
+        <div class="container">
+            <div class="trends-grid">
+                <div class="trend-card">
+                    <h3>Top Growing Tech Skills</h3>
+                    <canvas id="skillsChart"></canvas>
+                </div>
+                <div class="trend-card">
+                    <h3>Salary Trends by Experience (USD)</h3>
+                    <canvas id="salaryChart"></canvas>
+                </div>
+                <div class="trend-card">
+                    <h3>Most In-Demand Roles</h3>
+                    <canvas id="rolesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Jobfit. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Chart.js Configuration
+        Chart.defaults.font.family = 'Inter', 'sans-serif';
+        Chart.defaults.plugins.legend.position = 'bottom';
+
+        // 1. Top Growing Tech Skills (Bar Chart)
+        const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+        new Chart(skillsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['GenAI', 'Prompt Engineering', 'Data Engineering', 'Cloud Computing', 'Cybersecurity', 'MLOps'],
+                datasets: [{
+                    label: 'Year-over-Year Growth (%)',
+                    data: [304, 210, 180, 155, 140, 132],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.7)',
+                        'rgba(253, 121, 168, 0.7)',
+                        'rgba(0, 184, 148, 0.7)',
+                        'rgba(253, 203, 110, 0.7)',
+                        'rgba(9, 132, 227, 0.7)',
+                        'rgba(214, 48, 49, 0.7)'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0)',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // 2. Salary Trends by Experience (Line Chart)
+        const salaryCtx = document.getElementById('salaryChart').getContext('2d');
+        new Chart(salaryCtx, {
+            type: 'line',
+            data: {
+                labels: ['0-2 Yrs', '2-5 Yrs', '5-10 Yrs', '10-15 Yrs', '15+ Yrs'],
+                datasets: [{
+                    label: 'Average Salary (k)',
+                    data: [75, 110, 145, 170, 200],
+                    fill: true,
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+
+        // 3. Most In-Demand Roles (Doughnut Chart)
+        const rolesCtx = document.getElementById('rolesChart').getContext('2d');
+        new Chart(rolesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Software Engineer', 'Data Scientist', 'DevOps Engineer', 'Product Manager', 'UX/UI Designer'],
+                datasets: [{
+                    label: 'Market Share',
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(253, 121, 168, 0.8)',
+                        'rgba(0, 184, 148, 0.8)',
+                        'rgba(253, 203, 110, 0.8)',
+                        'rgba(9, 132, 227, 0.8)',
+                    ],
+                    hoverOffset: 4
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
