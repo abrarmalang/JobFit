@@ -38,6 +38,28 @@ class Search:
         self.jobs_df = self._load_jobs()
         self._log_memory("jobs-loaded")
 
+    def _prepare_dataframe_for_json(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Ensure DataFrame has JSON-serializable values."""
+        sanitized = df.copy()
+        # Convert categorical columns to plain strings
+        categorical_cols = sanitized.select_dtypes(include=["category"]).columns
+        for col in categorical_cols:
+            sanitized[col] = sanitized[col].astype(str)
+
+        # Convert object columns to strings to avoid non-serializable types
+        for col in sanitized.columns:
+            if sanitized[col].dtype == 'object':
+                sanitized[col] = sanitized[col].astype(str)
+
+        datetime_cols = sanitized.select_dtypes(include=['datetime64[ns]', 'datetime64[ns, UTC]']).columns
+        for col in datetime_cols:
+            sanitized[col] = sanitized[col].astype(str)
+
+        # Replace NaN/Inf with None to satisfy JSON encoder
+        sanitized = sanitized.replace({np.nan: None, np.inf: None, -np.inf: None})
+        sanitized = sanitized.where(pd.notnull(sanitized), None)
+        return sanitized
+
     def _current_memory_mb(self):
         """Return RSS in MB, using psutil when available."""
         if psutil is not None:
@@ -74,8 +96,13 @@ class Search:
 
         # --- Data Augmentation & Cleaning ---
         # Calculate job age in days
-        jobs_df['created_date'] = pd.to_datetime(jobs_df['created_date'], format='ISO8601', errors='coerce').dt.tz_localize(None)
-        days_delta = (pd.Timestamp.utcnow().normalize() - jobs_df['created_date']).dt.days
+        jobs_df['created_date'] = pd.to_datetime(
+            jobs_df['created_date'],
+            format='ISO8601',
+            errors='coerce'
+        ).dt.tz_localize(None)
+        now = pd.Timestamp.utcnow().tz_localize(None)
+        days_delta = (now - jobs_df['created_date']).dt.days
         jobs_df['job_age_days'] = days_delta.fillna(0).astype('int16')
 
         # Add placeholder for contract_time if it doesn't exist
@@ -156,18 +183,7 @@ class Search:
         start_index = (page - 1) * page_size
         end_index = start_index + page_size
         paginated_results = results_df.iloc[start_index:end_index].copy()
-
-        # Replace NaN with None for JSON compatibility
-        paginated_results = paginated_results.replace({np.nan: None})
-
-        # Convert all object columns to strings to ensure serializability
-        for col in paginated_results.columns:
-            if paginated_results[col].dtype == 'object':
-                paginated_results[col] = paginated_results[col].astype(str)
-
-        # Convert datetime objects to strings
-        if 'created_date' in paginated_results.columns:
-            paginated_results['created_date'] = paginated_results['created_date'].astype(str)
+        paginated_results = self._prepare_dataframe_for_json(paginated_results)
 
         payload = {
             "results": paginated_results.to_dict(orient='records'),
@@ -193,6 +209,8 @@ class Search:
         query_embedding = self.model.encode([query_text])
 
         similarities = cosine_similarity(query_embedding, self.embeddings).flatten()
+        # Replace NaNs produced by all-zero embeddings with zeros so JSON serialization succeeds
+        similarities = np.nan_to_num(similarities, nan=0.0)
         
         # Get top N results, then paginate
         # This is more efficient than paginating the entire dataset first
@@ -210,18 +228,8 @@ class Search:
 
         results_df = self.jobs_df.iloc[paginated_indices].copy()
         results_df['match_score'] = [round(s * 100) for s in similarities[paginated_indices]]
-        
-        # Replace NaN with None for JSON compatibility
-        results_df = results_df.replace({np.nan: None})
-        
-        # Convert all object columns to strings to ensure serializability
-        for col in results_df.columns:
-            if results_df[col].dtype == 'object':
-                results_df[col] = results_df[col].astype(str)
 
-        # Convert datetime objects to strings
-        if 'created_date' in results_df.columns:
-            results_df['created_date'] = results_df['created_date'].astype(str)
+        results_df = self._prepare_dataframe_for_json(results_df)
         
         payload = {
             "results": results_df.to_dict(orient='records'),
