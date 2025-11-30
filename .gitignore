@@ -42,5 +42,7 @@ data/interim/*.json
 data/processed/*.parquet
 
 # Models (keep structure, ignore large model files)
-models/embeddings/*/*.parquet
-models/embeddings/*/*.npy
+/models/*
+!/models/embeddings/
+/models/embeddings/*
+!/models/embeddings/metrics/
