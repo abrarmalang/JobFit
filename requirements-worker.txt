@@ -1,0 +1,7 @@
+
+
+# Worker-specific ML dependencies
+sentence-transformers>=2.2.2
+scikit-learn>=1.3.2
+# Install CPU-only PyTorch wheels from the official index
+torch==2.2.2+cpu

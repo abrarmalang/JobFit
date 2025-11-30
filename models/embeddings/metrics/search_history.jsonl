@@ -24,3 +24,5 @@
 {"timestamp": "2025-11-30T00:35:07.146161", "search_type": "semantic", "duration_ms": 324.65, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
 {"timestamp": "2025-11-30T00:35:20.693267", "search_type": "semantic", "duration_ms": 283.36, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
 {"timestamp": "2025-11-30T00:35:28.517152", "search_type": "semantic", "duration_ms": 365.86, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T01:37:25.013026", "search_type": "keyword", "duration_ms": 181.47, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 60, "status": "success"}
+{"timestamp": "2025-11-30T01:42:59.041947", "search_type": "keyword", "duration_ms": 121.81, "query": {"keywords": "python", "location": "", "skills": ""}, "results_count": 60, "status": "success"}

@@ -10,6 +10,13 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict
 
+PARQUET_WRITE_KWARGS = {
+    "index": False,
+    "compression": "zstd",
+    "engine": "pyarrow",
+    "use_dictionary": True
+}
+
 
 def consolidate_jobs(data_dir: Path = None, output_format: str = "parquet") -> Dict:
     """
@@ -56,7 +63,7 @@ def consolidate_jobs(data_dir: Path = None, output_format: str = "parquet") -> D
         # Save to interim
         interim_path = interim_dir / f"adzuna.{output_format}"
         if output_format == "parquet":
-            adzuna_df.to_parquet(interim_path, index=False)
+            adzuna_df.to_parquet(interim_path, **PARQUET_WRITE_KWARGS)
         else:
             adzuna_df.to_csv(interim_path, index=False)
 
@@ -73,7 +80,7 @@ def consolidate_jobs(data_dir: Path = None, output_format: str = "parquet") -> D
         # Save to interim
         interim_path = interim_dir / f"remoteok.{output_format}"
         if output_format == "parquet":
-            remoteok_df.to_parquet(interim_path, index=False)
+            remoteok_df.to_parquet(interim_path, **PARQUET_WRITE_KWARGS)
         else:
             remoteok_df.to_csv(interim_path, index=False)
 
@@ -104,7 +111,7 @@ def consolidate_jobs(data_dir: Path = None, output_format: str = "parquet") -> D
         # Save to processed
         processed_path = processed_dir / f"jobs.{output_format}"
         if output_format == "parquet":
-            final_df.to_parquet(processed_path, index=False)
+            final_df.to_parquet(processed_path, **PARQUET_WRITE_KWARGS)
         else:
             final_df.to_csv(processed_path, index=False)
 

@@ -14,6 +14,13 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+PARQUET_WRITE_KWARGS = {
+    "index": False,
+    "compression": "zstd",
+    "engine": "pyarrow",
+    "use_dictionary": True
+}
+
 from .embedder_base import EmbedderBase
 from .embedder_sentencetransformer import SentenceTransformerEmbedder
 
@@ -184,7 +191,7 @@ class JobEmbeddingGenerator:
 
         # Save embeddings dataframe
         output_path = self.embeddings_dir / "jobs.parquet"
-        embeddings_df.to_parquet(output_path, index=False)
+        embeddings_df.to_parquet(output_path, **PARQUET_WRITE_KWARGS)
 
         # Create README
         self._create_readme(

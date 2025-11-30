@@ -94,28 +94,6 @@
 }
 
 /* ==================== ANIMATIONS ==================== */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 @keyframes scaleIn {
     from {
         opacity: 0;
@@ -173,18 +151,6 @@
     }
     100% {
         background-position: 1000px 0;
-    }
-}
-
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
     }
 }
 
@@ -333,7 +299,6 @@ a:hover {
     backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    animation: fadeInDown 0.6s var(--transition-smooth);
 }
 
 .nav-container {
@@ -446,7 +411,6 @@ a:hover {
 }
 
 .hero-text {
-    animation: fadeInUp 0.8s var(--transition-smooth);
 }
 
 .hero-title {
@@ -461,7 +425,6 @@ a:hover {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradientShift 4s ease infinite;
 }
 
 .hero-description {
@@ -480,7 +443,6 @@ a:hover {
 
 .hero-visual {
     position: relative;
-    animation: fadeInUp 0.8s 0.2s var(--transition-smooth) backwards;
 }
 
 /* ==================== UI SHOWCASE ==================== */

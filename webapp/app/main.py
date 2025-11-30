@@ -9,8 +9,11 @@ import time
 import datetime
 import os
 import sys
+import logging
+import platform
+from functools import lru_cache
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import PyPDF2
@@ -24,6 +27,47 @@ from .dataops_renderer import render_dataops_page
 from .mlops_renderer import render_mlops_page
 from workers.embeddings.search import Search
 from shared.config import get_settings
+
+try:
+    import resource  # Unix
+except ImportError:  # pragma: no cover
+    resource = None
+
+try:
+    import psutil
+except ImportError:  # pragma: no cover
+    psutil = None
+
+logging.basicConfig(level=logging.INFO)
+
+# Memory and parsing limits
+MAX_UPLOAD_SIZE_MB = 5
+MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024
+MAX_PDF_PAGES = 20
+MAX_EXTRACTED_CHARS = 20000
+MAX_DESCRIPTION_LENGTH = 600
+
+# --- Memory helpers ---
+
+def _current_memory_mb():
+    if psutil is not None:
+        process = psutil.Process(os.getpid())
+        return process.memory_info().rss / (1024 * 1024)
+
+    if resource is not None:
+        usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        if platform.system() == "Darwin":
+            return usage / (1024 * 1024)
+        return usage / 1024
+
+    return float("nan")
+
+
+def log_memory(stage: str):
+    mem = _current_memory_mb()
+    message = f"[Jobfit] {stage} memory usage: {mem:.2f} MB"
+    print(message)
+    logging.getLogger("jobfit.memory").info(message)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -39,11 +83,22 @@ MLOPS_TEMPLATE = STATIC_DIR / "mlops.html"
 SEARCH_HISTORY_LOG = get_settings().models_dir / "embeddings" / "metrics" / "search_history.jsonl"
 
 
-# Initialize search object
-search_client = Search()
-
 # Mount static files for CSS, JS, images, etc.
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@lru_cache(maxsize=1)
+def get_search_client() -> Search:
+    """Lazily instantiate the Search client so heavy indexes load once."""
+    client = Search()
+    log_memory("Search client initialized")
+    return client
+
+
+@app.on_event("startup")
+async def log_startup_memory():
+    """Emit process memory usage once the server is ready."""
+    log_memory("FastAPI startup")
 
 
 # --- Utility Functions ---
@@ -61,16 +116,79 @@ def log_search_event(search_type: str, duration: float, query_params: dict, resu
     with open(SEARCH_HISTORY_LOG, "a") as f:
         f.write(json.dumps(log_entry) + "\n")
 
+def ensure_file_within_limit(upload: UploadFile):
+    """Validate upload size to avoid runaway memory usage."""
+    try:
+        upload.file.seek(0, os.SEEK_END)
+        size = upload.file.tell()
+        upload.file.seek(0)
+    except Exception:
+        # Some SpooledTemporaryFile objects may not support seek/tell once rolled to disk.
+        return
+
+    if size > MAX_UPLOAD_SIZE_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File exceeds maximum allowed size of {MAX_UPLOAD_SIZE_MB}MB."
+        )
+
+
+def _truncate_chunks(chunks):
+    """Combine text chunks until the global character budget is hit."""
+    total = 0
+    collected = []
+    for chunk in chunks:
+        if not chunk:
+            continue
+        remaining = MAX_EXTRACTED_CHARS - total
+        if remaining <= 0:
+            break
+        collected.append(chunk[:remaining])
+        total += min(len(chunk), remaining)
+    return "\n\n".join(collected)
+
+
 def extract_text_from_file(file: UploadFile):
-    """Extracts text from PDF or DOCX file."""
-    if file.filename.endswith(".pdf"):
+    """Extract text from PDF/DOCX incrementally with safety limits."""
+    ensure_file_within_limit(file)
+    filename = file.filename.lower()
+
+    if filename.endswith(".pdf"):
+        file.file.seek(0)
         pdf_reader = PyPDF2.PdfReader(file.file)
-        return "".join(page.extract_text() for page in pdf_reader.pages)
-    elif file.filename.endswith(".docx"):
+
+        def pdf_chunks():
+            for idx, page in enumerate(pdf_reader.pages):
+                if idx >= MAX_PDF_PAGES:
+                    break
+                yield page.extract_text() or ""
+
+        return _truncate_chunks(pdf_chunks())
+
+    if filename.endswith(".docx"):
+        file.file.seek(0)
         doc = Document(file.file)
-        return "\n".join([para.text for para in doc.paragraphs])
-    else:
-        raise HTTPException(status_code=400, detail="Unsupported file type. Please upload a PDF or DOCX.")
+        return _truncate_chunks(para.text for para in doc.paragraphs)
+
+    raise HTTPException(status_code=400, detail="Unsupported file type. Please upload a PDF or DOCX.")
+
+
+def sanitize_search_payload(payload: dict) -> dict:
+    """Trim large fields in the search payload before sending to clients."""
+    if not isinstance(payload, dict):
+        return payload
+
+    results = payload.get("results") or []
+    for job in results:
+        if not isinstance(job, dict):
+            continue
+        description = job.get("description")
+        if isinstance(description, str) and len(description) > MAX_DESCRIPTION_LENGTH:
+            job["description"] = description[:MAX_DESCRIPTION_LENGTH].rstrip() + "..."
+        full_desc = job.get("full_description")
+        if isinstance(full_desc, str) and len(full_desc) > MAX_DESCRIPTION_LENGTH:
+            job["full_description"] = full_desc[:MAX_DESCRIPTION_LENGTH].rstrip() + "..."
+    return payload
 
 
 # --- Static Page Routes ---
@@ -145,6 +263,8 @@ async def api_keyword_search(
     start_time = time.time()
     query_params = {"keywords": keywords, "location": location, "skills": skills}
     
+    search_client = get_search_client()
+
     try:
         data = search_client.keyword_search(
             query=keywords,
@@ -153,6 +273,7 @@ async def api_keyword_search(
             page=page,
             page_size=page_size
         )
+        data = sanitize_search_payload(data)
         duration = time.time() - start_time
         log_search_event("keyword", duration, query_params, data['total_results'])
         return data
@@ -172,6 +293,14 @@ async def api_semantic_search(
     start_time = time.time()
     query_params = {"filename": file.filename}
 
+    search_client = get_search_client()
+
+    if not getattr(search_client, "semantic_available", True):
+        raise HTTPException(
+            status_code=503,
+            detail="Semantic search is not enabled on this deployment."
+        )
+
     try:
         query_text = extract_text_from_file(file)
         if not query_text.strip():
@@ -182,6 +311,7 @@ async def api_semantic_search(
             page=page,
             page_size=page_size
         )
+        data = sanitize_search_payload(data)
         duration = time.time() - start_time
         log_search_event("semantic", duration, query_params, data['total_results'])
         return data
