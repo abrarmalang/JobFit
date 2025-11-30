@@ -40,10 +40,3 @@ data/raw/*.json
 data/interim/*.csv
 data/interim/*.json
 data/processed/*.parquet
-
-# Models (keep structure, ignore large model files)
-/models/*
-!/models/embeddings/
-/models/embeddings/*
-!/models/embeddings/metrics/
-!/models/**/*.parquet
