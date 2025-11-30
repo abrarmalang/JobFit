@@ -85,6 +85,7 @@ def build_cv_context(cv_text: str, target_role: Optional[str] = None) -> Dict[st
 
         # Metadata
         "cv_word_count": cv_analysis.get("sections", {}).get("total_words", 0),
+        "cv_text": cv_text,
     }
 
     return context

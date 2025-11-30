@@ -154,6 +154,9 @@
         let currentSearchType = 'keyword'; // 'keyword' or 'semantic'
         let currentQuery = {}; // Stores the parameters of the last search
         let currentFile = null;
+        let lastCvText = null;
+        const CV_STORAGE_KEY = 'jobfitCvFromReview';
+        const CV_TRANSFER_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
         // --- UI TAB SWITCHING ---
         function showTab(tab) {
@@ -264,10 +267,36 @@
                 const response = await fetch(url, { method: 'POST', body: formData });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
+                lastCvText = null;
                 renderResults(data, 'semantic');
             } catch (error) {
                 console.error('Semantic search failed:', error);
                 renderError('Failed to process CV. Please try again later.');
+            } finally {
+                setLoadingState(uploadBtn, false);
+            }
+        }
+
+        async function semanticSearchWithText(cvText, page = 1) {
+            currentPage = page;
+            lastCvText = cvText;
+            currentSearchType = 'semantic';
+
+            const uploadBtn = document.getElementById('cvUploadBtn');
+            setLoadingState(uploadBtn, true);
+
+            try {
+                const response = await fetch(`/api/search/semantic/text?page=${currentPage}&page_size=${pageSize}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cv_text: cvText })
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                renderResults(data, 'semantic');
+            } catch (error) {
+                console.error('Semantic search failed:', error);
+                renderError(error.message || 'Failed to process CV details. Please try again later.');
             } finally {
                 setLoadingState(uploadBtn, false);
             }
@@ -365,12 +394,49 @@
         function changePage(page) {
             if (currentSearchType === 'keyword') {
                 searchJobs(page);
+            } else if (lastCvText) {
+                semanticSearchWithText(lastCvText, page);
             } else {
                 uploadCV(page);
             }
             window.scrollTo({ top: document.getElementById('resultsSection').offsetTop, behavior: 'smooth' });
         }
 
+        function autoRunCvSearchIfAvailable() {
+            const stored = sessionStorage.getItem(CV_STORAGE_KEY);
+            if (!stored) {
+                return;
+            }
+
+            sessionStorage.removeItem(CV_STORAGE_KEY);
+
+            let parsed;
+            try {
+                parsed = JSON.parse(stored);
+            } catch (error) {
+                console.warn('Invalid CV payload in storage', error);
+                return;
+            }
+
+            if (!parsed || !parsed.cv_text) {
+                return;
+            }
+
+            if (parsed.timestamp && Date.now() - parsed.timestamp > CV_TRANSFER_TTL_MS) {
+                console.warn('Stored CV payload expired');
+                return;
+            }
+
+            showTab('cv');
+            const fileNameLabel = document.getElementById('fileName');
+            if (fileNameLabel) {
+                fileNameLabel.textContent = 'Using CV from CV Review';
+            }
+
+            semanticSearchWithText(parsed.cv_text);
+        }
+
+        autoRunCvSearchIfAvailable();
     </script>
 </body>
 </html>

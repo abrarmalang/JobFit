@@ -205,10 +205,10 @@
             <!-- Action Buttons -->
             <div style="margin-top: 3rem; text-align: center;">
                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="jobs.html" class="btn btn-primary" style="text-decoration: none;">
+                    <button class="btn btn-primary" style="text-decoration: none;" onclick="redirectToJobsWithCv()">
                         <span class="material-icons">search</span>
                         <span>Find Matching Jobs</span>
-                    </a>
+                    </button>
                     <button class="btn btn-outline" onclick="window.location.href = '/cvreview.html';">
                         <span class="material-icons">refresh</span>
                         <span>Analyze Another CV</span>
@@ -343,6 +343,45 @@
                 analyzCV();
             }
         });
+
+        const CV_STORAGE_KEY = 'jobfitCvFromReview';
+
+        function redirectToJobsWithCv() {
+            const cvText = extractAnalyzedCvText();
+            if (!cvText) {
+                alert('Analyze a CV first to enable matching jobs.');
+                return;
+            }
+
+            const payload = {
+                cv_text: cvText,
+                timestamp: Date.now()
+            };
+
+            try {
+                sessionStorage.setItem(CV_STORAGE_KEY, JSON.stringify(payload));
+            } catch (error) {
+                console.warn('Unable to cache CV text for job search', error);
+                alert('Your browser blocked the CV data transfer. Please allow storage or try another browser.');
+                return;
+            }
+
+            window.location.href = '/jobs.html?from=cvreview';
+        }
+
+        function extractAnalyzedCvText() {
+            const dataElement = document.getElementById('cvData');
+            if (!dataElement) {
+                return '';
+            }
+            try {
+                const parsed = JSON.parse(dataElement.textContent || '{}');
+                return parsed.cv_text || '';
+            } catch (error) {
+                console.error('Failed to parse CV data payload', error);
+                return '';
+            }
+        }
     </script>
 </body>
 </html>

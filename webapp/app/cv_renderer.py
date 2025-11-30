@@ -5,6 +5,7 @@ SSR rendering using lxml for CV review page.
 Follows the same pattern as dataops_renderer.py and mlops_renderer.py.
 """
 
+import json
 from pathlib import Path
 from typing import Dict, Any
 from lxml import html as lhtml
@@ -47,6 +48,8 @@ def render_cv_review_page(template_path: Path, context: Dict[str, Any]) -> str:
     # Render gap analysis if available
     if context.get("has_gap_analysis"):
         _render_gap_analysis(doc, context)
+
+    _embed_cv_text_data(doc, context)
 
     return lhtml.tostring(doc, encoding="unicode")
 
@@ -390,3 +393,20 @@ def _render_gap_analysis(doc, context: Dict[str, Any]):
             parent_parent = parent.getparent()
             insert_index = parent_parent.index(parent)
             parent_parent.insert(insert_index, gap_section)
+
+
+def _embed_cv_text_data(doc, context: Dict[str, Any]):
+    """Attach CV text as JSON so the frontend can reuse it for semantic search."""
+    cv_text = context.get("cv_text")
+    if not cv_text:
+        return
+
+    body_nodes = doc.xpath("//body")
+    if not body_nodes:
+        return
+
+    script = lhtml.Element("script")
+    script.set("type", "application/json")
+    script.set("id", "cvData")
+    script.text = json.dumps({"cv_text": cv_text})
+    body_nodes[0].append(script)

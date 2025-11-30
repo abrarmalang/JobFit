@@ -13,7 +13,7 @@ import logging
 import platform
 from functools import lru_cache
 from pathlib import Path
-from fastapi import FastAPI, UploadFile, File, HTTPException, Query
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query, Body
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import PyPDF2
@@ -323,6 +323,45 @@ async def api_semantic_search(
     except Exception as e:
         duration = time.time() - start_time
         log_search_event("semantic", duration, query_params, 0, status="error")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/search/semantic/text")
+async def api_semantic_search_text(
+    cv_text: str = Body(..., embed=True),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100)
+):
+    """API endpoint for semantic CV search using raw text (no file upload)."""
+    start_time = time.time()
+    query_params = {"source": "cvreview"}
+
+    search_client = get_search_client()
+
+    if not getattr(search_client, "semantic_available", True):
+        raise HTTPException(
+            status_code=503,
+            detail="Semantic search is not enabled on this deployment."
+        )
+
+    if not cv_text or not cv_text.strip():
+        raise HTTPException(status_code=400, detail="cv_text is required for semantic search.")
+
+    try:
+        data = search_client.semantic_search(
+            query_text=cv_text,
+            page=page,
+            page_size=page_size
+        )
+        data = sanitize_search_payload(data)
+        duration = time.time() - start_time
+        log_search_event("semantic_text", duration, query_params, data['total_results'])
+        return data
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        duration = time.time() - start_time
+        log_search_event("semantic_text", duration, query_params, 0, status="error")
         raise HTTPException(status_code=500, detail=str(e))
 
 
