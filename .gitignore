@@ -46,3 +46,4 @@ data/processed/*.parquet
 !/models/embeddings/
 /models/embeddings/*
 !/models/embeddings/metrics/
+!/models/**/*.parquet
