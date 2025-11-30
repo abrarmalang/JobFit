@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1.125rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1.125rem;" id="keywordSearchBtn">
                             <span class="material-icons">search</span>
                             <span>Search Jobs</span>
                         </button>
@@ -95,19 +95,18 @@
             <!-- CV Upload Tab -->
             <div id="cvSearchTab" class="search-tab" style="display: none;">
                 <div style="max-width: 600px; margin: 0 auto 3rem; padding: 3rem; background: white; border-radius: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center;">
-                    <div style="border: 3px dashed var(--color-cloud); border-radius: 1rem; padding: 3rem; transition: all 0.3s; cursor: pointer;"
-                         onmouseover="this.style.borderColor='var(--color-cosmic-purple)'; this.style.background='rgba(102,126,234,0.05)';"
-                         onmouseout="this.style.borderColor='var(--color-cloud)'; this.style.background='transparent';"
+                    <div id="drop-zone" style="border: 3px dashed var(--color-cloud); border-radius: 1rem; padding: 3rem; transition: all 0.3s; cursor: pointer;"
                          onclick="document.getElementById('cvFile').click();">
                         <div class="material-icons" style="font-size: 5rem; color: var(--color-cosmic-purple); margin-bottom: 1rem;">cloud_upload</div>
                         <h3 style="margin-bottom: 0.5rem;">Upload Your CV</h3>
                         <p style="color: var(--color-graphite); margin-bottom: 1.5rem;">Drag and drop or click to browse</p>
+                        <p id="fileName" style="font-weight: 600; color: var(--color-cosmic-purple);"></p>
                         <p style="font-size: 0.875rem; color: var(--color-silver);">Supported formats: PDF, DOCX (Max 5MB)</p>
-                        <input type="file" id="cvFile" accept=".pdf,.docx" style="display: none;" onchange="uploadCV()">
+                        <input type="file" id="cvFile" accept=".pdf,.docx" style="display: none;" onchange="handleFileSelect(this.files)">
                     </div>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 1.5rem; justify-content: center;" onclick="document.getElementById('cvFile').click();">
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1.5rem; justify-content: center;" onclick="uploadCV()" id="cvUploadBtn">
                         <span class="material-icons">upload_file</span>
-                        <span>Choose File</span>
+                        <span>Find Semantic Matches</span>
                     </button>
                 </div>
             </div>
@@ -116,103 +115,17 @@
             <div id="resultsSection" style="display: none;">
                 <div style="margin-bottom: 2rem; text-align: center;">
                     <h2 class="section-title" style="margin-bottom: 0.5rem;">Job Matches</h2>
-                    <p class="section-description" id="resultsCount">Found 12 matching positions</p>
+                    <p class="section-description" id="resultsCount"></p>
                 </div>
 
-                <!-- Job Cards -->
-                <div style="display: grid; gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
-                    <!-- Sample Job Card 1 -->
-                    <div class="feature-card" style="padding: 2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                            <div>
-                                <h3 class="feature-title" style="margin-bottom: 0.5rem; font-size: 1.5rem;">Senior Python Developer</h3>
-                                <p style="color: var(--color-graphite); margin-bottom: 0.5rem;">TechCorp Solutions • London, UK</p>
-                                <p style="color: var(--color-silver); font-size: 0.875rem;">Posted 2 days ago</p>
-                            </div>
-                            <div style="background: linear-gradient(135deg, #00B894, #00D2D3); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 1.125rem;">
-                                94% Match
-                            </div>
-                        </div>
-                        <p style="color: var(--color-graphite); margin-bottom: 1rem; line-height: 1.6;">
-                            We're looking for an experienced Python developer to join our backend team. You'll work on scalable microservices, APIs, and data processing pipelines using modern Python frameworks.
-                        </p>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Python</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Django</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">FastAPI</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">PostgreSQL</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">AWS</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <p style="margin: 0; color: var(--color-graphite); font-weight: 600;">£70,000 - £90,000</p>
-                                <p style="margin: 0; color: var(--color-silver); font-size: 0.875rem;">Full-time • Hybrid</p>
-                            </div>
-                            <button class="btn btn-primary">View Details</button>
-                        </div>
-                    </div>
-
-                    <!-- Sample Job Card 2 -->
-                    <div class="feature-card" style="padding: 2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                            <div>
-                                <h3 class="feature-title" style="margin-bottom: 0.5rem; font-size: 1.5rem;">Machine Learning Engineer</h3>
-                                <p style="color: var(--color-graphite); margin-bottom: 0.5rem;">AI Innovations Ltd • Remote</p>
-                                <p style="color: var(--color-silver); font-size: 0.875rem;">Posted 5 days ago</p>
-                            </div>
-                            <div style="background: linear-gradient(135deg, #667EEA, #764BA2); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 1.125rem;">
-                                89% Match
-                            </div>
-                        </div>
-                        <p style="color: var(--color-graphite); margin-bottom: 1rem; line-height: 1.6;">
-                            Join our ML team to build production-grade machine learning systems. Experience with PyTorch, transformers, and MLOps required. Work on cutting-edge NLP and computer vision projects.
-                        </p>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Python</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">PyTorch</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Transformers</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">MLOps</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Docker</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <p style="margin: 0; color: var(--color-graphite); font-weight: 600;">£80,000 - £110,000</p>
-                                <p style="margin: 0; color: var(--color-silver); font-size: 0.875rem;">Full-time • Remote</p>
-                            </div>
-                            <button class="btn btn-primary">View Details</button>
-                        </div>
-                    </div>
-
-                    <!-- Sample Job Card 3 -->
-                    <div class="feature-card" style="padding: 2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                            <div>
-                                <h3 class="feature-title" style="margin-bottom: 0.5rem; font-size: 1.5rem;">Full Stack Developer</h3>
-                                <p style="color: var(--color-graphite); margin-bottom: 0.5rem;">StartupHub Inc • Manchester, UK</p>
-                                <p style="color: var(--color-silver); font-size: 0.875rem;">Posted 1 week ago</p>
-                            </div>
-                            <div style="background: linear-gradient(135deg, #FD79A8, #FEE140); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 1.125rem;">
-                                82% Match
-                            </div>
-                        </div>
-                        <p style="color: var(--color-graphite); margin-bottom: 1rem; line-height: 1.6;">
-                            Build modern web applications using React and Python. Join a fast-paced startup environment where you'll have ownership of features from conception to deployment.
-                        </p>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">Python</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">React</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">TypeScript</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">FastAPI</span>
-                            <span style="background: rgba(102,126,234,0.1); color: var(--color-cosmic-purple); padding: 0.4rem 0.8rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500;">MongoDB</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <p style="margin: 0; color: var(--color-graphite); font-weight: 600;">£50,000 - £70,000</p>
-                                <p style="margin: 0; color: var(--color-silver); font-size: 0.875rem;">Full-time • On-site</p>
-                            </div>
-                            <button class="btn btn-primary">View Details</button>
-                        </div>
-                    </div>
+                <!-- Job Cards Container -->
+                <div id="job-cards-container" style="display: grid; gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+                    <!-- Job cards will be dynamically inserted here -->
+                </div>
+                
+                <!-- Pagination Container -->
+                <div id="pagination-container" style="display: flex; justify-content: center; gap: 1rem; margin-top: 3rem;">
+                    <!-- Pagination buttons will be dynamically inserted here -->
                 </div>
             </div>
         </div>
@@ -226,33 +139,7 @@
                     <h3>JOBFIT</h3>
                     <p>Next-generation AI career platform.<br>Powered by advanced machine learning.</p>
                 </div>
-
-                <div class="footer-section">
-                    <h4>Features</h4>
-                    <ul class="footer-links">
-                        <li><a href="jobs.html">Job Search</a></li>
-                        <li><a href="cvreview.html">CV Review</a></li>
-                        <li><a href="trends.html">Job Trends</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Operations</h4>
-                    <ul class="footer-links">
-                        <li><a href="dataops.html">Data Operations Hub</a></li>
-                        <li><a href="mlops.html">AI/ML Operations Hub</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul class="footer-links">
-                        <li><a href="designsystem.html">Design System</a></li>
-                        <li><a href="/">Home</a></li>
-                    </ul>
-                </div>
             </div>
-
             <div class="footer-bottom">
                 <p>&copy; 2024 Jobfit. All rights reserved. Built with advanced machine learning.</p>
             </div>
@@ -260,11 +147,21 @@
     </footer>
 
     <script>
+        // --- STATE MANAGEMENT ---
+        let currentPage = 1;
+        const pageSize = 10;
+        let currentSearchType = 'keyword'; // 'keyword' or 'semantic'
+        let currentQuery = {}; // Stores the parameters of the last search
+        let currentFile = null;
+
+        // --- UI TAB SWITCHING ---
         function showTab(tab) {
             const keywordTab = document.getElementById('keywordSearchTab');
             const cvTab = document.getElementById('cvSearchTab');
             const keywordBtn = document.getElementById('keywordTab');
             const cvBtn = document.getElementById('cvTab');
+            
+            currentSearchType = tab;
 
             if (tab === 'keyword') {
                 keywordTab.style.display = 'block';
@@ -278,24 +175,201 @@
                 cvBtn.className = 'btn btn-primary';
             }
         }
+        
+        // --- DRAG AND DROP ---
+        const dropZone = document.getElementById('drop-zone');
 
-        function searchJobs() {
-            const resultsSection = document.getElementById('resultsSection');
-            resultsSection.style.display = 'block';
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--color-cosmic-purple)';
+            dropZone.style.background = 'rgba(102,126,234,0.05)';
+        });
 
-        function uploadCV() {
-            const fileInput = document.getElementById('cvFile');
-            if (fileInput.files.length > 0) {
-                setTimeout(() => {
-                    const resultsSection = document.getElementById('resultsSection');
-                    document.getElementById('resultsCount').textContent = 'Found 12 semantic matches for your CV';
-                    resultsSection.style.display = 'block';
-                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 500);
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--color-cloud)';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--color-cloud)';
+            dropZone.style.background = 'transparent';
+            handleFileSelect(e.dataTransfer.files);
+        });
+
+        function handleFileSelect(files) {
+            if (files.length > 0) {
+                currentFile = files[0];
+                document.getElementById('fileName').textContent = currentFile.name;
             }
         }
+
+        // --- API CALLS & RENDERING ---
+        
+        function setLoadingState(button, isLoading) {
+            const span = button.querySelector('span:last-child');
+            if (isLoading) {
+                button.disabled = true;
+                span.textContent = 'Searching...';
+            } else {
+                button.disabled = false;
+                span.textContent = currentSearchType === 'keyword' ? 'Search Jobs' : 'Find Semantic Matches';
+            }
+        }
+
+        async function searchJobs(page = 1) {
+            currentPage = page;
+            const keywords = document.getElementById('keywords').value;
+            const location = document.getElementById('location').value;
+            const skills = document.getElementById('skills').value;
+            
+            currentQuery = { keywords, location, skills };
+            
+            const url = `/api/search/keyword?page=${currentPage}&page_size=${pageSize}&keywords=${encodeURIComponent(keywords)}&location=${encodeURIComponent(location)}&skills=${encodeURIComponent(skills)}`;
+            
+            const searchBtn = document.getElementById('keywordSearchBtn');
+            setLoadingState(searchBtn, true);
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                renderResults(data, 'keyword');
+            } catch (error) {
+                console.error('Keyword search failed:', error);
+                renderError('Failed to fetch job results. Please try again later.');
+            } finally {
+                setLoadingState(searchBtn, false);
+            }
+        }
+
+        async function uploadCV(page = 1) {
+            currentPage = page;
+            if (!currentFile) {
+                alert('Please select a CV file first.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            
+            const url = `/api/search/semantic?page=${currentPage}&page_size=${pageSize}`;
+            
+            const uploadBtn = document.getElementById('cvUploadBtn');
+            setLoadingState(uploadBtn, true);
+
+            try {
+                const response = await fetch(url, { method: 'POST', body: formData });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                renderResults(data, 'semantic');
+            } catch (error) {
+                console.error('Semantic search failed:', error);
+                renderError('Failed to process CV. Please try again later.');
+            } finally {
+                setLoadingState(uploadBtn, false);
+            }
+        }
+
+        function renderResults(data, searchType) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const cardsContainer = document.getElementById('job-cards-container');
+            
+            cardsContainer.innerHTML = ''; // Clear previous results
+            
+            if (data.results && data.results.length > 0) {
+                const count = data.total_results;
+                resultsCountEl.textContent = `Found ${count} matching position${count > 1 ? 's' : ''}${searchType === 'semantic' ? ' for your CV' : ''}.`;
+                data.results.forEach(job => {
+                    cardsContainer.innerHTML += createJobCard(job);
+                });
+                renderPagination(data.total_results);
+            } else {
+                resultsCountEl.textContent = 'No matching jobs found.';
+                document.getElementById('pagination-container').innerHTML = '';
+            }
+            
+            resultsSection.style.display = 'block';
+            if (currentPage === 1) {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function renderError(message) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const cardsContainer = document.getElementById('job-cards-container');
+            cardsContainer.innerHTML = '';
+            document.getElementById('pagination-container').innerHTML = '';
+            resultsCountEl.textContent = message;
+            resultsSection.style.display = 'block';
+        }
+
+        function createJobCard(job) {
+            const salary = (job.salary_min && job.salary_max) ? `£${job.salary_min.toLocaleString()} - £${job.salary_max.toLocaleString()}` : 'Not specified';
+            const location = job.location_display || 'Not specified';
+            const description = job.description ? job.description.substring(0, 200) + '...' : 'No description available.';
+            const matchScore = job.match_score ? `<div style="background: linear-gradient(135deg, #00B894, #00D2D3); color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 1.125rem;">${job.match_score}% Match</div>` : '';
+
+            return `
+                <div class="feature-card" style="padding: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h3 class="feature-title" style="margin-bottom: 0.5rem; font-size: 1.5rem;">${job.title || 'No Title'}</h3>
+                            <p style="color: var(--color-graphite); margin-bottom: 0.5rem;">${job.company || 'No Company'} • ${location}</p>
+                            <p style="color: var(--color-silver); font-size: 0.875rem;">Posted ${job.job_age_days || 'N/A'} days ago</p>
+                        </div>
+                        ${matchScore}
+                    </div>
+                    <p style="color: var(--color-graphite); margin-bottom: 1rem; line-height: 1.6;">${description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                        <div>
+                            <p style="margin: 0; color: var(--color-graphite); font-weight: 600;">${salary}</p>
+                            <p style="margin: 0; color: var(--color-silver); font-size: 0.875rem;">${job.contract_time || 'N/A'}</p>
+                        </div>
+                        <a href="${job.redirect_url}" target="_blank" class="btn btn-primary">View Original</a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderPagination(totalResults) {
+            const paginationContainer = document.getElementById('pagination-container');
+            paginationContainer.innerHTML = '';
+            
+            try {
+                const totalPages = Math.ceil(totalResults / pageSize);
+                if (totalPages <= 1) return;
+
+                // Previous button
+                if (currentPage > 1) {
+                    paginationContainer.innerHTML += `<button class="btn btn-outline" onclick="changePage(${currentPage - 1})">Previous</button>`;
+                }
+
+                // Page numbers (simplified)
+                paginationContainer.innerHTML += `<div style="padding: 0.5rem 1rem; align-self: center;">Page ${currentPage} of ${totalPages}</div>`;
+
+                // Next button
+                if (currentPage < totalPages) {
+                    paginationContainer.innerHTML += `<button class="btn btn-outline" onclick="changePage(${currentPage + 1})">Next</button>`;
+                }
+            } catch (error) {
+                console.error("Error rendering pagination:", error);
+                paginationContainer.innerHTML = "<p style='color: red;'>Error rendering pagination. See console for details.</p>";
+            }
+        }
+        
+        function changePage(page) {
+            if (currentSearchType === 'keyword') {
+                searchJobs(page);
+            } else {
+                uploadCV(page);
+            }
+            window.scrollTo({ top: document.getElementById('resultsSection').offsetTop, behavior: 'smooth' });
+        }
+
     </script>
 </body>
 </html>

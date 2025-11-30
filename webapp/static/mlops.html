@@ -130,7 +130,7 @@
                             <th>Last Check</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="model-services-tbody">
                         <tr>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -178,15 +178,9 @@
                     <h2 class="feature-title" style="margin: 0;">Embedding Generation Statistics</h2>
                 </div>
 
-                <!-- Overall Progress -->
-                <div style="margin-bottom: 2rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                        <span style="font-weight: 600; color: var(--color-charcoal);">Overall Progress</span>
-                        <span style="font-weight: 700; color: var(--color-cosmic-purple);">9,247 / 10,000 jobs (92%)</span>
-                    </div>
-                    <div style="width: 100%; height: 1rem; background: var(--color-cloud); border-radius: 0.5rem; overflow: hidden;">
-                        <div style="width: 92%; height: 100%; background: var(--gradient-cosmic); transition: width 0.3s;"></div>
-                    </div>
+                <!-- Embedding Statistics Summary -->
+                <div id="embedding-stats-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Stats will be rendered here by SSR -->
                 </div>
 
                 <!-- Embedding History -->
@@ -201,7 +195,7 @@
                             <th>Completed</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="embedding-history-tbody">
                         <tr>
                             <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">emb_2024_001</code></td>
                             <td>text-embedding-3-small</td>
@@ -239,7 +233,7 @@
             </div>
 
             <!-- User CV Operations Statistics -->
-            <div class="feature-card" style="padding: 2rem;">
+            <div class="feature-card" style="padding: 2rem; margin-bottom: 2rem;">
                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                     <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">assessment</div>
                     <h2 class="feature-title" style="margin: 0;">User CV Operations Statistics</h2>
@@ -303,22 +297,37 @@
                             <td>0.5s</td>
                             <td>2024-01-15 11:38</td>
                         </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Search Operations Statistics -->
+            <div class="feature-card" style="padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">search</div>
+                    <h2 class="feature-title" style="margin: 0;">Search Operations Statistics</h2>
+                </div>
+
+                <!-- Aggregate Metrics -->
+                <div id="search-stats-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Search stats will be rendered here by SSR -->
+                </div>
+
+                <!-- Recent Search Activities -->
+                <h3 style="margin-bottom: 1rem; font-size: 1.125rem; color: var(--color-charcoal);">Recent Search Activities</h3>
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">cv_req_5888</code></td>
-                            <td><span class="status-badge status-completed">Success</span></td>
-                            <td>15</td>
-                            <td>82/100</td>
-                            <td>2.7s</td>
-                            <td>2024-01-15 11:35</td>
+                            <th>Timestamp</th>
+                            <th>Type</th>
+                            <th>Query</th>
+                            <th>Results</th>
+                            <th>Duration</th>
+                            <th>Status</th>
                         </tr>
-                        <tr>
-                            <td><code style="font-size: 0.875rem; color: var(--color-cosmic-purple);">cv_req_5887</code></td>
-                            <td><span class="status-badge status-completed">Success</span></td>
-                            <td>11</td>
-                            <td>71/100</td>
-                            <td>2.3s</td>
-                            <td>2024-01-15 11:30</td>
-                        </tr>
+                    </thead>
+                    <tbody id="search-history-tbody">
+                        <!-- Search history will be rendered here by SSR -->
                     </tbody>
                 </table>
             </div>
@@ -330,49 +339,3 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-brand">
-                    <h3>JOBFIT</h3>
-                    <p>Next-generation AI career platform.<br>Powered by advanced machine learning.</p>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Features</h4>
-                    <ul class="footer-links">
-                        <li><a href="jobs.html">Job Search</a></li>
-                        <li><a href="cvreview.html">CV Review</a></li>
-                        <li><a href="trends.html">Job Trends</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Operations</h4>
-                    <ul class="footer-links">
-                        <li><a href="dataops.html">Data Operations Hub</a></li>
-                        <li><a href="mlops.html">AI/ML Operations Hub</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul class="footer-links">
-                        <li><a href="designsystem.html">Design System</a></li>
-                        <li><a href="/">Home</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2024 Jobfit. All rights reserved. Built with advanced machine learning.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Auto-refresh metrics every 30 seconds (for demo purposes)
-        setInterval(() => {
-            console.log('Auto-refreshing ML metrics...');
-            // In production, this would fetch real-time data from the backend
-        }, 30000);
-    </script>
-</body>
-</html>

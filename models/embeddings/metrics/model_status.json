@@ -1,0 +1,16 @@
+{
+  "all-mpnet-base-v2": {
+    "service_type": "SentenceTransformer",
+    "status": "ONLINE",
+    "embedding_dim": 768,
+    "last_used": "2025-11-29T23:14:17.138292",
+    "details": {}
+  },
+  "text-embedding-3-small": {
+    "service_type": "OpenAI",
+    "status": "ONLINE",
+    "embedding_dim": 1536,
+    "last_used": "2025-11-29T23:44:00.945161",
+    "details": {}
+  }
+}

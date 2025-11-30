@@ -64,6 +64,41 @@ class DataConfig(BaseSettings):
     )
 
 
+class EmbeddingConfig(BaseSettings):
+    """Embedding model configuration."""
+
+    model_name: str = Field(
+        default="all-mpnet-base-v2",
+        description="Sentence transformer model name"
+    )
+    device: str = Field(
+        default="cpu",
+        description="Device to use (cpu, cuda, mps)"
+    )
+    batch_size: int = Field(
+        default=32,
+        ge=1,
+        le=512,
+        description="Batch size for embedding generation"
+    )
+    normalize: bool = Field(
+        default=True,
+        description="Normalize embeddings to unit length"
+    )
+    cache_dir: Optional[str] = Field(
+        default=None,
+        description="Model cache directory"
+    )
+
+    model_config = SettingsConfigDict(
+        env_prefix="EMBEDDING_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        protected_namespaces=()  # Allow model_* field names
+    )
+
+
 class Settings(BaseSettings):
     """Main application settings."""
 
@@ -71,6 +106,7 @@ class Settings(BaseSettings):
     adzuna: AdzunaConfig = Field(default_factory=AdzunaConfig)
     remoteok: RemoteOKConfig = Field(default_factory=RemoteOKConfig)
     data: DataConfig = Field(default_factory=DataConfig)
+    embedding: EmbeddingConfig = Field(default_factory=EmbeddingConfig)
 
     # Project paths
     project_root: Path = Field(default_factory=lambda: Path.cwd())

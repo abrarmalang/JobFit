@@ -139,3 +139,127 @@ def log_processing_run(
     }
 
     _append_jsonl(history_path, entry)
+
+
+# ============================================================================
+# ML/AI Metrics
+# ============================================================================
+
+def update_model_status(
+    model_name: str,
+    status: str,
+    service_type: str = "SentenceTransformer",
+    embedding_dim: Optional[int] = None,
+    details: Optional[Dict[str, Any]] = None,
+    models_dir: Optional[Path] = None
+) -> None:
+    """
+    Persist per-model status to models/embeddings/metrics/.
+
+    Args:
+        model_name: Specific model name (e.g., "all-mpnet-base-v2")
+        status: Model status (ONLINE, OFFLINE, ERROR)
+        service_type: Type of service (SentenceTransformer, OpenAI, etc.)
+        embedding_dim: Embedding dimension for this model
+        details: Additional model-specific details
+    """
+    if models_dir is None:
+        models_dir = PROJECT_ROOT / "models"
+
+    # Create metrics directory within embeddings folder
+    metrics_dir = models_dir / "embeddings" / "metrics"
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+    status_path = metrics_dir / "model_status.json"
+
+    payload = _load_json(status_path, {})
+
+    # Per-model status tracking
+    payload[model_name] = {
+        "service_type": service_type,
+        "status": status.upper(),
+        "embedding_dim": embedding_dim,
+        "last_used": datetime.utcnow().isoformat(),
+        "details": details or {}
+    }
+
+    _write_json(status_path, payload)
+
+
+def log_embedding_run(
+    result: Dict[str, Any],
+    models_dir: Optional[Path] = None
+) -> None:
+    """Append embedding generation run metadata to models/embeddings/metrics/."""
+    if models_dir is None:
+        models_dir = PROJECT_ROOT / "models"
+
+    # Create metrics directory within embeddings folder
+    metrics_dir = models_dir / "embeddings" / "metrics"
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+    history_path = metrics_dir / "history.jsonl"
+
+    entry = {
+        "timestamp": result.get("timestamp", datetime.utcnow().isoformat()),
+        "status": result.get("status"),
+        "model_name": result.get("model_name"),
+        "embedding_dim": result.get("embedding_dim"),
+        "num_jobs": result.get("num_jobs"),
+        "num_embeddings_per_job": result.get("num_embeddings_per_job"),
+        "total_embeddings": result.get("total_embeddings"),
+        "duration_seconds": result.get("duration_seconds", 0),
+        "embeddings_per_second": result.get("embeddings_per_second", 0),
+        "output_path": result.get("output_path")
+    }
+
+    _append_jsonl(history_path, entry)
+
+
+def update_embedding_worker_status(
+    status: str,
+    details: Optional[Dict[str, Any]] = None,
+    data_dir: Optional[Path] = None
+) -> None:
+    """Update embedding worker status."""
+    update_worker_status("embedding", status, details, data_dir)
+
+
+def log_cv_analysis(
+    result: Dict[str, Any],
+    data_dir: Optional[Path] = None
+) -> None:
+    """Append CV analysis activity."""
+    metrics_dir = _metrics_dir(data_dir)
+    history_path = metrics_dir / "cv_analysis_history.jsonl"
+
+    entry = {
+        "timestamp": result.get("timestamp", datetime.utcnow().isoformat()),
+        "status": result.get("status"),
+        "cv_id": result.get("cv_id"),
+        "skills_extracted": result.get("skills_extracted", 0),
+        "jobs_matched": result.get("jobs_matched", 0),
+        "duration_seconds": result.get("duration_seconds", 0),
+        "model_used": result.get("model_used"),
+        "error": result.get("error")
+    }
+
+    _append_jsonl(history_path, entry)
+
+
+def update_cv_analysis_stats(
+    total_analyzed: int,
+    average_duration: float,
+    error_rate: float,
+    data_dir: Optional[Path] = None
+) -> None:
+    """Update aggregate CV analysis statistics."""
+    metrics_dir = _metrics_dir(data_dir)
+    stats_path = metrics_dir / "cv_analysis_stats.json"
+
+    payload = {
+        "total_analyzed": total_analyzed,
+        "average_duration_seconds": average_duration,
+        "error_rate": error_rate,
+        "updated_at": datetime.utcnow().isoformat()
+    }
+
+    _write_json(stats_path, payload)
