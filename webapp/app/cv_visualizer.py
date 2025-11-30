@@ -76,8 +76,7 @@ def create_ats_score_chart(ats_score: int) -> str:
     ax.text(0, -0.25, label, ha='center', va='center',
             fontsize=16, color=COLORS['gray'])
 
-    ax.set_title('ATS Readiness Score', fontsize=18, fontweight='bold',
-                 color=COLORS['dark'], pad=20)
+
 
     plt.tight_layout()
     return _fig_to_base64(fig)
@@ -122,8 +121,7 @@ def create_skills_chart(skills: List[Dict[str, Any]], max_skills: int = 10) -> s
     ax.set_yticks(y_pos)
     ax.set_yticklabels(categories, fontsize=11)
     ax.set_xlabel('Number of Skills', fontsize=12, fontweight='bold')
-    ax.set_title('Skills by Category', fontsize=16, fontweight='bold',
-                 color=COLORS['dark'], pad=20)
+
 
     # Add value labels on bars
     for i, (cat, count) in enumerate(zip(categories, counts)):
@@ -185,8 +183,7 @@ def create_proficiency_chart(skills: List[Dict[str, Any]], top_n: int = 8) -> st
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(skill_names, fontsize=11)
 
-    ax.set_title('Top Skills Proficiency', fontsize=16, fontweight='bold',
-                 color=COLORS['dark'], pad=30)
+
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -230,8 +227,6 @@ def create_gap_analysis_chart(gap_analysis: Dict[str, Any]) -> str:
     match_pct = gap_analysis.get('match_percentage', 0)
     target_role = gap_analysis.get('target_role', 'Target Role')
 
-    ax.set_title(f'Skill Match Analysis: {target_role}\n{match_pct:.1f}% Match',
-                 fontsize=16, fontweight='bold', color=COLORS['dark'], pad=20)
 
     # Add value labels
     ax.text(matched[0] / 2, 0, f'{matched[0]} matched',
@@ -366,9 +361,6 @@ def create_section_coverage_chart(sections: Dict[str, float]) -> str:
         text.set_fontsize(14)
         text.set_fontweight('bold')
         text.set_color(COLORS['dark'])
-
-    ax.set_title('CV Content Distribution', fontsize=18, fontweight='bold',
-                 color=COLORS['dark'], pad=20)
 
     plt.tight_layout()
     return _fig_to_base64(fig)
