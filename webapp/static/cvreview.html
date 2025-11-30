@@ -25,6 +25,7 @@
                 <li><a href="trends.html" class="nav-link">Trends</a></li>
                 <li><a href="dataops.html" class="nav-link">Data Ops</a></li>
                 <li><a href="mlops.html" class="nav-link">ML Ops</a></li>
+                <li><a href="config.html" class="nav-link">Config</a></li>
             </ul>
         </div>
     </nav>
@@ -65,6 +66,20 @@
                         <span class="material-icons">cloud_upload</span>
                         <span>Choose File to Analyze</span>
                     </button>
+
+                    <!-- Optional: Target Role for Gap Analysis -->
+                    <div style="margin-top: 2rem; text-align: left; border-top: 1px solid var(--color-cloud); padding-top: 2rem;">
+                        <label for="targetRole" style="display: block; font-weight: 600; margin-bottom: 0.75rem; color: var(--color-obsidian); font-size: 1rem;">
+                            Target Role (Optional)
+                        </label>
+                        <p style="font-size: 0.875rem; color: var(--color-silver); margin-bottom: 1rem;">
+                            Specify a target job role to get personalized skill gap analysis
+                        </p>
+                        <input type="text" id="targetRole" placeholder="e.g., Software Engineer, Data Scientist, Frontend Developer"
+                               style="width: 100%; padding: 0.875rem 1rem; border: 2px solid var(--color-cloud); border-radius: 0.5rem; font-size: 1rem; font-family: inherit; transition: border-color 0.2s;"
+                               onfocus="this.style.borderColor='var(--color-cosmic-purple)';"
+                               onblur="this.style.borderColor='var(--color-cloud)';">
+                    </div>
                 </div>
             </div>
         </div>
@@ -194,7 +209,7 @@
                         <span class="material-icons">search</span>
                         <span>Find Matching Jobs</span>
                     </a>
-                    <button class="btn btn-outline" onclick="document.getElementById('uploadSection').scrollIntoView({behavior: 'smooth'}); document.getElementById('resultsSection').style.display='none';">
+                    <button class="btn btn-outline" onclick="window.location.href = '/cvreview.html';">
                         <span class="material-icons">refresh</span>
                         <span>Analyze Another CV</span>
                     </button>
@@ -245,19 +260,64 @@
     </footer>
 
     <script>
-        function analyzCV() {
+        async function analyzCV() {
             const fileInput = document.getElementById('cvFile');
-            if (fileInput.files.length > 0) {
-                // Show loading state
-                const dropZone = document.getElementById('dropZone');
-                dropZone.innerHTML = '<div class="material-icons" style="font-size: 4rem; color: var(--color-cosmic-purple); margin-bottom: 1rem; animation: rotate 2s linear infinite;">autorenew</div><h3>Analyzing your CV...</h3><p style="color: var(--color-graphite);">Our AI is extracting skills and generating insights</p>';
+            if (fileInput.files.length === 0) {
+                return;
+            }
 
-                // Simulate AI processing
-                setTimeout(() => {
-                    document.getElementById('uploadSection').style.display = 'none';
-                    document.getElementById('resultsSection').style.display = 'block';
-                    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-                }, 2000);
+            const file = fileInput.files[0];
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB. Please upload a smaller file.');
+                return;
+            }
+
+            // Show loading state
+            const dropZone = document.getElementById('dropZone');
+            dropZone.innerHTML = '<div class="material-icons" style="font-size: 4rem; color: var(--color-cosmic-purple); margin-bottom: 1rem; animation: rotate 2s linear infinite;">autorenew</div><h3>Analyzing your CV...</h3><p style="color: var(--color-graphite);">Our AI is extracting skills and generating insights</p>';
+
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // Build URL with target role query parameter if specified
+                let url = '/api/cv/analyze';
+                const targetRoleInput = document.getElementById('targetRole');
+                if (targetRoleInput && targetRoleInput.value.trim()) {
+                    url += `?target_role=${encodeURIComponent(targetRoleInput.value.trim())}`;
+                }
+
+                // Call API
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+                    throw new Error(error.detail || 'Failed to analyze CV');
+                }
+
+                // Get HTML response and replace the page
+                const html = await response.text();
+                document.open();
+                document.write(html);
+                document.close();
+
+            } catch (error) {
+                console.error('CV analysis error:', error);
+                dropZone.innerHTML = `
+                    <div class="material-icons" style="font-size: 4rem; color: var(--color-secondary); margin-bottom: 1rem;">error_outline</div>
+                    <h3>Analysis Failed</h3>
+                    <p style="color: var(--color-graphite);">${error.message}</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="location.reload()">
+                        <span class="material-icons">refresh</span>
+                        <span>Try Again</span>
+                    </button>
+                `;
             }
         }
 

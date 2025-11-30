@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin configuration for Jobfit AI settings">
+    <title>Admin Config - Jobfit</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">JOBFIT</a>
+            <ul class="nav-links">
+                <li><a href="jobs.html" class="nav-link">Job Search</a></li>
+                <li><a href="cvreview.html" class="nav-link">CV Review</a></li>
+                <li><a href="trends.html" class="nav-link">Trends</a></li>
+                <li><a href="dataops.html" class="nav-link">Data Ops</a></li>
+                <li><a href="mlops.html" class="nav-link">ML Ops</a></li>
+                <li><a href="config.html" class="nav-link active">Config</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="hero" style="min-height: 30vh; padding-top: 120px; padding-bottom: 40px;">
+        <div class="hero-grid"></div>
+        <div class="container">
+            <div class="hero-content" style="grid-template-columns: 1fr; text-align: center;">
+                <div class="hero-text">
+                    <h1 class="hero-title" style="margin-bottom: 1rem;">
+                        <span class="hero-title-gradient">LLM Configuration</span>
+                    </h1>
+                    <p class="hero-description" style="margin: 0 auto; max-width: 600px;">
+                        Configure LLM providers for intelligent CV skill extraction
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configuration Instructions -->
+    <section class="features" style="padding-top: 2rem;">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+
+                <!-- Configuration Methods -->
+                <div class="feature-card" style="padding: 2.5rem; margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">settings</div>
+                        <h2 class="feature-title" style="margin: 0;">Configuration Methods</h2>
+                    </div>
+
+                    <div style="display: grid; gap: 2rem;">
+                        <!-- Method 1: Environment Variables -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-success);">
+                            <h3 style="margin-bottom: 1rem; color: var(--color-obsidian); display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="material-icons" style="color: var(--color-success);">check_circle</span>
+                                Method 1: Environment Variables (Recommended)
+                            </h3>
+                            <p style="margin-bottom: 1rem; color: var(--color-graphite);">
+                                Set API keys as environment variables before starting the server:
+                            </p>
+                            <pre style="background: var(--color-obsidian); color: #00FF88; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.875rem;">export GROQ_API_KEY="your-groq-api-key-here"
+export GEMINI_API_KEY="your-gemini-key-here"
+export OPENAI_API_KEY="your-openai-key-here"
+export ANTHROPIC_API_KEY="your-anthropic-key-here"
+
+# Then start the server
+python3 -m uvicorn webapp.app.main:app --reload</pre>
+                            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--color-graphite);">
+                                The system will automatically detect and use the configured provider.
+                            </p>
+                        </div>
+
+                        <!-- Method 2: Config File -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem; border-left: 4px solid var(--color-info);">
+                            <h3 style="margin-bottom: 1rem; color: var(--color-obsidian); display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="material-icons" style="color: var(--color-info);">description</span>
+                                Method 2: Config File
+                            </h3>
+                            <p style="margin-bottom: 1rem; color: var(--color-graphite);">
+                                Create <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace;">config/llm_config.json</code> in your project directory:
+                            </p>
+                            <pre style="background: var(--color-obsidian); color: #00FF88; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.875rem;">{
+  "provider": "groq",
+  "api_key": "your-api-key-here",
+  "model": "llama-3.1-70b-versatile",
+  "temperature": 0.1,
+  "max_tokens": 1000,
+  "enable_fallback": true
+}</pre>
+                            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--color-graphite);">
+                                The config manager will load this file automatically on startup.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supported Providers -->
+                <div class="feature-card" style="padding: 2.5rem; margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">cloud</div>
+                        <h2 class="feature-title" style="margin: 0;">Supported LLM Providers</h2>
+                    </div>
+
+                    <div style="display: grid; gap: 1.5rem;">
+                        <!-- Groq -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; color: var(--color-obsidian);">Groq</h3>
+                                <span style="background: var(--color-success); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">RECOMMENDED</span>
+                            </div>
+                            <p style="color: var(--color-graphite); margin-bottom: 1rem;">
+                                Free, ultra-fast inference with Llama models. Generous rate limits.
+                            </p>
+                            <p style="font-size: 0.875rem;">
+                                <strong>Environment Variable:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">GROQ_API_KEY</code><br>
+                                <strong>Config Provider:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"groq"</code><br>
+                                <strong>Recommended Model:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"llama-3.1-70b-versatile"</code><br>
+                                <strong>Get API Key:</strong> <a href="https://console.groq.com" target="_blank" style="color: var(--color-cosmic-purple);">console.groq.com</a>
+                            </p>
+                        </div>
+
+                        <!-- Gemini -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; color: var(--color-obsidian);">Google Gemini</h3>
+                                <span style="background: var(--color-success); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">FREE</span>
+                            </div>
+                            <p style="color: var(--color-graphite); margin-bottom: 1rem;">
+                                Free tier with 60 requests/minute. Good quality for most use cases.
+                            </p>
+                            <p style="font-size: 0.875rem;">
+                                <strong>Environment Variable:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">GEMINI_API_KEY</code><br>
+                                <strong>Config Provider:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"gemini"</code><br>
+                                <strong>Recommended Model:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"gemini-pro"</code><br>
+                                <strong>Get API Key:</strong> <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: var(--color-cosmic-purple);">Google AI Studio</a>
+                            </p>
+                        </div>
+
+                        <!-- OpenAI -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; color: var(--color-obsidian);">OpenAI</h3>
+                                <span style="background: var(--color-warning); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">$5 FREE CREDIT</span>
+                            </div>
+                            <p style="color: var(--color-graphite); margin-bottom: 1rem;">
+                                GPT-3.5-turbo is very affordable (~$0.002 per CV). $5 free credit for new accounts.
+                            </p>
+                            <p style="font-size: 0.875rem;">
+                                <strong>Environment Variable:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">OPENAI_API_KEY</code><br>
+                                <strong>Config Provider:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"openai"</code><br>
+                                <strong>Recommended Model:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"gpt-3.5-turbo"</code><br>
+                                <strong>Get API Key:</strong> <a href="https://platform.openai.com" target="_blank" style="color: var(--color-cosmic-purple);">platform.openai.com</a>
+                            </p>
+                        </div>
+
+                        <!-- Anthropic -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; color: var(--color-obsidian);">Anthropic Claude</h3>
+                            </div>
+                            <p style="color: var(--color-graphite); margin-bottom: 1rem;">
+                                Claude 3 Haiku is fast and affordable. Limited free credits available.
+                            </p>
+                            <p style="font-size: 0.875rem;">
+                                <strong>Environment Variable:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">ANTHROPIC_API_KEY</code><br>
+                                <strong>Config Provider:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"anthropic"</code><br>
+                                <strong>Recommended Model:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"claude-3-haiku-20240307"</code><br>
+                                <strong>Get API Key:</strong> <a href="https://console.anthropic.com" target="_blank" style="color: var(--color-cosmic-purple);">console.anthropic.com</a>
+                            </p>
+                        </div>
+
+                        <!-- Hugging Face -->
+                        <div style="padding: 1.5rem; background: var(--color-ghost); border-radius: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; color: var(--color-obsidian);">Hugging Face</h3>
+                                <span style="background: var(--color-success); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600;">FREE</span>
+                            </div>
+                            <p style="color: var(--color-graphite); margin-bottom: 1rem;">
+                                Free tier available but slower and rate-limited. Good for testing.
+                            </p>
+                            <p style="font-size: 0.875rem;">
+                                <strong>Environment Variable:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">HF_API_KEY</code><br>
+                                <strong>Config Provider:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"huggingface"</code><br>
+                                <strong>Recommended Model:</strong> <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">"mistralai/Mistral-7B-Instruct-v0.2"</code><br>
+                                <strong>Get API Key:</strong> <a href="https://huggingface.co/settings/tokens" target="_blank" style="color: var(--color-cosmic-purple);">huggingface.co/settings/tokens</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fallback Mode -->
+                <div class="feature-card" style="padding: 2.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="material-icons" style="font-size: 2rem; color: var(--color-info);">info</div>
+                        <h2 class="feature-title" style="margin: 0;">Fallback Mode</h2>
+                    </div>
+                    <p style="color: var(--color-graphite); line-height: 1.6; margin-bottom: 1rem;">
+                        If no LLM provider is configured, the system automatically uses rule-based skill extraction:
+                    </p>
+                    <ul style="color: var(--color-graphite); line-height: 1.8; margin-left: 1.5rem;">
+                        <li>Extracts skills from dedicated skills sections</li>
+                        <li>Pattern matching for common skills across all industries</li>
+                        <li>Works for tech and non-tech CVs</li>
+                        <li>No API costs or rate limits</li>
+                    </ul>
+                    <p style="margin-top: 1.5rem; padding: 1rem; background: var(--color-ghost); border-radius: 0.5rem; font-size: 0.875rem;">
+                        <strong>Note:</strong> LLM-based extraction provides better accuracy and works for any profession (healthcare, education, sales, etc.), while fallback mode is faster but less comprehensive.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 4rem;">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>JOBFIT</h3>
+                    <p>Next-generation AI career platform.<br>Powered by advanced machine learning.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="jobs.html">Job Search</a></li>
+                        <li><a href="cvreview.html">CV Review</a></li>
+                        <li><a href="trends.html">Job Trends</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dataops.html">Data Operations Hub</a></li>
+                        <li><a href="mlops.html">AI/ML Operations Hub</a></li>
+                        <li><a href="config.html">Configuration</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="designsystem.html">Design System</a></li>
+                        <li><a href="/">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Jobfit. All rights reserved. Built with advanced machine learning.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

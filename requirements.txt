@@ -22,3 +22,7 @@ pydantic-settings==2.1.0
 
 # Embeddings & ML (server-only minimal)
 numpy>=1.26.0,<2.0.0
+
+# Visualization
+matplotlib==3.8.2
+scikit-learn==1.4.0

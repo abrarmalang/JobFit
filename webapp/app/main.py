@@ -25,6 +25,8 @@ sys.path.insert(0, str(project_root / "src"))
 
 from .dataops_renderer import render_dataops_page
 from .mlops_renderer import render_mlops_page
+from .cv_loader import build_cv_context
+from .cv_renderer import render_cv_review_page
 from workers.embeddings.search import Search
 from shared.config import get_settings
 
@@ -80,6 +82,7 @@ app = FastAPI(
 STATIC_DIR = Path(__file__).parent.parent / "static"
 DATAOPS_TEMPLATE = STATIC_DIR / "dataops.html"
 MLOPS_TEMPLATE = STATIC_DIR / "mlops.html"
+CVREVIEW_TEMPLATE = STATIC_DIR / "cvreview.html"
 SEARCH_HISTORY_LOG = get_settings().models_dir / "embeddings" / "metrics" / "search_history.jsonl"
 
 
@@ -321,6 +324,43 @@ async def api_semantic_search(
         duration = time.time() - start_time
         log_search_event("semantic", duration, query_params, 0, status="error")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/cv/analyze", response_class=HTMLResponse)
+async def api_cv_analyze(
+    file: UploadFile = File(...),
+    target_role: str = Query(None, description="Optional target job role for gap analysis")
+):
+    """
+    API endpoint for CV analysis.
+    Returns rendered HTML with analysis results and visualizations.
+    """
+    try:
+        # Extract text from uploaded CV
+        cv_text = extract_text_from_file(file)
+        if not cv_text.strip():
+            raise HTTPException(status_code=400, detail="Could not extract text from the uploaded file.")
+
+        # Build context with analysis and visualizations
+        context = build_cv_context(cv_text, target_role)
+
+        # Render HTML with results
+        html = render_cv_review_page(CVREVIEW_TEMPLATE, context)
+
+        return HTMLResponse(content=html)
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logging.error(f"CV analysis error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error analyzing CV: {str(e)}")
+
+
+@app.get("/config", response_class=HTMLResponse)
+@app.get("/config.html", response_class=HTMLResponse)
+async def config():
+    """Serve LLM configuration page"""
+    return FileResponse(STATIC_DIR / "config.html")
 
 
 if __name__ == "__main__":
