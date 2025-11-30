@@ -23,5 +23,7 @@ pydantic-settings==2.1.0
 # Embeddings & ML
 sentence-transformers>=2.2.2
 scikit-learn>=1.3.2
-torch>=2.1.0
+# Pin to the latest CPU wheel; install with:
+# pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
+torch==2.2.2
 numpy>=1.26.0,<2.0.0
