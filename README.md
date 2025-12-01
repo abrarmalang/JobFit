@@ -44,7 +44,18 @@ python scripts/run_generate_embeddings.py
 
 Additional collectors (remote jobs, diverse search profiles, etc.) live under `scripts/run_collection_*.py` and can be started the same way.
 
-## 5. Troubleshooting
+## 5. Documentation
+
+For detailed documentation on:
+- Architecture and system design
+- Complete data pipeline guide
+- Feature documentation (CV Review, MLOps Hub)
+- Deployment instructions
+- Troubleshooting guide
+
+See: [docs/INDEX.md](docs/INDEX.md)
+
+## 6. Quick Troubleshooting
 
 - Missing API keys → check `.env`.
 - Large model downloads → the embedding worker pulls `sentence-transformers/all-mpnet-base-v2` on the first run; allow a few minutes.
