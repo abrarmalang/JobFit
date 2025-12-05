@@ -141,6 +141,12 @@ async def log_startup_memory():
     log_memory("FastAPI startup")
 
 
+@app.get("/health")
+async def health():
+    """Health check endpoint for monitoring."""
+    return {"status": "healthy"}
+
+
 # --- Utility Functions ---
 
 def log_search_event(search_type: str, duration: float, query_params: dict, results_count: int, status: str = "success"):
@@ -471,4 +477,4 @@ async def config():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
