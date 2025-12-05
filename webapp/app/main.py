@@ -93,7 +93,15 @@ def get_recommendation_engine() -> RecommendationEngine:
       - job_clusters.parquet
     from models/trained/
     """
-    return RecommendationEngine()
+    try:
+        return RecommendationEngine()
+    except FileNotFoundError as e:
+        logging.error(f"Model files not found: {e}")
+        logging.error("Please run the training pipeline to generate model files")
+        raise HTTPException(
+            status_code=503,
+            detail="Recommendation engine not available. Model files not found. Please run the training pipeline."
+        )
 
 
 @app.post("/api/recommend", response_class=JSONResponse)
