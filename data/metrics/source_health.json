@@ -1,9 +1,9 @@
 {
   "Adzuna": {
     "status": "ONLINE",
-    "last_check": "2025-12-05T00:23:23.619155",
-    "response_time_ms": 1846.686019230769,
-    "rate_limit_used": 52,
+    "last_check": "2025-12-05T02:59:46.822064",
+    "response_time_ms": 1592.007,
+    "rate_limit_used": 4,
     "rate_limit_total": 1000,
     "details": {
       "profile": "CA - All Jobs"

@@ -1,22 +1,22 @@
 {
   "collection": {
     "status": "IDLE",
-    "updated_at": "2025-12-05T00:23:23.619966",
+    "updated_at": "2025-12-05T02:59:46.822930",
     "details": {
-      "mode": "large-scale",
+      "mode": "2000-jobs",
       "profiles": 4,
-      "last_run": "2025-12-05T00:21:47.567318",
-      "jobs_collected": 13969,
-      "api_calls": 584,
-      "duration_minutes": 16.433564333333333
+      "last_run": "2025-12-05T02:59:40.441328",
+      "jobs_collected": 2000,
+      "api_calls": 40,
+      "duration_minutes": 1.5863866333333334
     }
   },
   "processing": {
     "status": "IDLE",
-    "updated_at": "2025-12-05T00:24:02.127091",
+    "updated_at": "2025-12-05T02:59:56.966299",
     "details": {
-      "last_run": "2025-12-05T00:24:01.866649",
-      "records_out": 13969
+      "last_run": "2025-12-05T02:59:56.907411",
+      "records_out": 2000
     }
   },
   "embedding": {

@@ -41,3 +41,9 @@ data/raw/*.json
 data/interim/*.csv
 data/interim/*.json
 data/processed/*.parquet
+
+# Models - track chunked parquet files (auto-split to <80MB each)
+# Single-file parquets are ignored, chunked parts are tracked
+#models/**/*.parquet
+#!models/**/*_part_*.parquet
+temp/*
