@@ -154,7 +154,7 @@ def update_model_status(
     models_dir: Optional[Path] = None
 ) -> None:
     """
-    Persist per-model status to models/embeddings/metrics/.
+    Persist per-model status to models/metrics/.
 
     Args:
         model_name: Specific model name (e.g., "all-mpnet-base-v2")
@@ -166,8 +166,8 @@ def update_model_status(
     if models_dir is None:
         models_dir = PROJECT_ROOT / "models"
 
-    # Create metrics directory within embeddings folder
-    metrics_dir = models_dir / "embeddings" / "metrics"
+    # Create metrics directory at models level
+    metrics_dir = models_dir / "metrics"
     metrics_dir.mkdir(parents=True, exist_ok=True)
     status_path = metrics_dir / "model_status.json"
 
@@ -189,12 +189,12 @@ def log_embedding_run(
     result: Dict[str, Any],
     models_dir: Optional[Path] = None
 ) -> None:
-    """Append embedding generation run metadata to models/embeddings/metrics/."""
+    """Append embedding generation run metadata to models/metrics/."""
     if models_dir is None:
         models_dir = PROJECT_ROOT / "models"
 
-    # Create metrics directory within embeddings folder
-    metrics_dir = models_dir / "embeddings" / "metrics"
+    # Create metrics directory at models level
+    metrics_dir = models_dir / "metrics"
     metrics_dir.mkdir(parents=True, exist_ok=True)
     history_path = metrics_dir / "history.jsonl"
 

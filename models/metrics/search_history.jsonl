@@ -26,3 +26,28 @@
 {"timestamp": "2025-11-30T00:35:28.517152", "search_type": "semantic", "duration_ms": 365.86, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
 {"timestamp": "2025-11-30T01:37:25.013026", "search_type": "keyword", "duration_ms": 181.47, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 60, "status": "success"}
 {"timestamp": "2025-11-30T01:42:59.041947", "search_type": "keyword", "duration_ms": 121.81, "query": {"keywords": "python", "location": "", "skills": ""}, "results_count": 60, "status": "success"}
+{"timestamp": "2025-11-30T13:01:53.989278", "search_type": "semantic", "duration_ms": 4797.85, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T13:03:55.692490", "search_type": "semantic", "duration_ms": 3288.34, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T13:05:13.619484", "search_type": "semantic", "duration_ms": 3454.98, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T13:05:23.515079", "search_type": "keyword", "duration_ms": 28.3, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 20, "status": "success"}
+{"timestamp": "2025-11-30T13:05:28.762975", "search_type": "keyword", "duration_ms": 22.06, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 20, "status": "success"}
+{"timestamp": "2025-11-30T13:08:13.454803", "search_type": "semantic", "duration_ms": 625.24, "query": {"filename": "Abrar_CV.pdf"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T15:17:55.805249", "search_type": "semantic_text", "duration_ms": 3399.13, "query": {"source": "cvreview"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T15:22:17.883283", "search_type": "semantic_text", "duration_ms": 3151.64, "query": {"source": "cvreview"}, "results_count": 100, "status": "success"}
+{"timestamp": "2025-11-30T15:59:21.411083", "search_type": "keyword", "duration_ms": 55.7, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 20, "status": "success"}
+{"timestamp": "2025-12-04T22:50:09.977210", "search_type": "keyword", "duration_ms": 676.25, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 0, "status": "error"}
+{"timestamp": "2025-12-04T23:09:03.598061", "search_type": "keyword", "duration_ms": 3214.05, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 10, "status": "success"}
+{"timestamp": "2025-12-04T23:11:08.138989", "search_type": "keyword", "duration_ms": 3211.43, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 10, "status": "success"}
+{"timestamp": "2025-12-04T23:11:16.795742", "search_type": "keyword", "duration_ms": 94.19, "query": {"keywords": "Python", "location": "", "skills": ""}, "results_count": 10, "status": "success"}
+{"timestamp": "2025-12-04T23:12:56.072137", "search_type": "keyword", "duration_ms": 3190.82, "query": {"keywords": "Java", "location": null, "skills": null}, "results_count": 889, "status": "success"}
+{"timestamp": "2025-12-04T23:13:04.180930", "search_type": "keyword", "duration_ms": 53.93, "query": {"keywords": "Java", "location": null, "skills": null}, "results_count": 889, "status": "success"}
+{"timestamp": "2025-12-04T23:13:12.831058", "search_type": "keyword", "duration_ms": 45.0, "query": {"keywords": "Java", "location": null, "skills": null}, "results_count": 889, "status": "success"}
+{"timestamp": "2025-12-04T23:13:36.676711", "search_type": "keyword", "duration_ms": 100.67, "query": {"keywords": "java", "location": "", "skills": ""}, "results_count": 889, "status": "success"}
+{"timestamp": "2025-12-04T23:13:43.832158", "search_type": "keyword", "duration_ms": 79.6, "query": {"keywords": "python", "location": "", "skills": ""}, "results_count": 1067, "status": "success"}
+{"timestamp": "2025-12-04T23:13:47.582298", "search_type": "keyword", "duration_ms": 80.93, "query": {"keywords": "python", "location": "", "skills": ""}, "results_count": 1067, "status": "success"}
+{"timestamp": "2025-12-04T23:13:53.095754", "search_type": "keyword", "duration_ms": 79.28, "query": {"keywords": "python", "location": "", "skills": ""}, "results_count": 1067, "status": "success"}
+{"timestamp": "2025-12-04T23:14:35.096182", "search_type": "keyword", "duration_ms": 64.03, "query": {"keywords": "Java", "location": null, "skills": null}, "results_count": 889, "status": "success"}
+{"timestamp": "2025-12-05T00:44:38.882478", "search_type": "keyword", "duration_ms": 3646.07, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 1136, "status": "success"}
+{"timestamp": "2025-12-05T00:45:43.667660", "search_type": "keyword", "duration_ms": 3248.4, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 1136, "status": "success"}
+{"timestamp": "2025-12-05T00:47:35.376222", "search_type": "keyword", "duration_ms": 3276.83, "query": {"keywords": "Java", "location": "", "skills": ""}, "results_count": 1136, "status": "success"}
+{"timestamp": "2025-12-05T00:49:46.751447", "search_type": "semantic", "duration_ms": 3114.01, "query": {"filename": "Rachael Muriithi CV- UON .pdf"}, "results_count": 100, "status": "success"}

@@ -18,8 +18,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = PROJECT_ROOT / "data"
 METRICS_DIR = DATA_DIR / "metrics"
 MODELS_DIR = PROJECT_ROOT / "models"
-EMBEDDING_METRICS_DIR = MODELS_DIR / "embeddings" / "metrics"
-SEARCH_HISTORY_LOG = EMBEDDING_METRICS_DIR / 'search_history.jsonl'
+MODELS_METRICS_DIR = MODELS_DIR / "metrics"
+SEARCH_HISTORY_LOG = MODELS_METRICS_DIR / 'search_history.jsonl'
 
 
 def _load_json(path: Path, default: Any) -> Any:
@@ -145,9 +145,12 @@ def _status_label(status: str) -> str:
 
 def build_mlops_context() -> Dict[str, Any]:
     """Return ML/AI data ready for SSR rendering."""
-    # Read embedding model status and metrics from models/embeddings/metrics/
-    model_status = _load_json(EMBEDDING_METRICS_DIR / "model_status.json", {})
-    embedding_history_raw = _read_jsonl(EMBEDDING_METRICS_DIR / "history.jsonl", limit=50)
+    # Read embedding model status and metrics from models/metrics/
+    model_status = _load_json(MODELS_METRICS_DIR / "model_status.json", {})
+    embedding_history_raw = _read_jsonl(MODELS_METRICS_DIR / "history.jsonl", limit=50)
+
+    # Read training metrics from models/metrics/
+    training_metrics = _load_json(MODELS_METRICS_DIR / "training_metrics.json", {})
 
     # Read worker status from data/metrics/ (operational metrics)
     worker_status = _load_json(METRICS_DIR / "worker_status.json", {})
@@ -165,6 +168,7 @@ def build_mlops_context() -> Dict[str, Any]:
         "embedding_worker": _format_embedding_worker(worker_status.get("embedding", {})),
         "embedding_stats": _calculate_embedding_stats(embedding_history_raw),
         "embedding_history": _format_embedding_history(embedding_history_raw[:6]),  # Show last 6
+        "training_metrics": _format_training_metrics(training_metrics),
         "cv_stats": _format_cv_stats(cv_analysis_stats),
         "cv_history": _format_cv_history(cv_analysis_history),
         "search_stats": _format_search_stats(search_history_raw),
@@ -235,7 +239,7 @@ def _format_model_services(model_status: Dict[str, Any]) -> List[Dict[str, Any]]
     Each entry contains: service_type, status, embedding_dim, last_used
     """
     service_icons = {
-        "SentenceTransformer": "deployed_code",
+        "SentenceTransformer": "memory",
         "OpenAI": "cloud",
         "Cohere": "cloud_circle",
         "vLLM": "dns"
@@ -247,12 +251,13 @@ def _format_model_services(model_status: Dict[str, Any]) -> List[Dict[str, Any]]
         status = (info.get("status") or "OFFLINE").upper()
         embedding_dim = info.get("embedding_dim")
 
+        # Format: Service column shows service type, Models column shows model name + dimension
         cards.append({
-            "title": model_name,
+            "title": service_type,
             "icon": service_icons.get(service_type, "smart_toy"),
             "status": _status_label(status),
             "status_class": _status_badge_class(status),
-            "models": f"{service_type} (dim: {embedding_dim})" if embedding_dim else service_type,
+            "models": f"{model_name} (dim: {embedding_dim})" if embedding_dim else model_name,
             "last_check": _format_timestamp(info.get("last_used"))
         })
 
@@ -356,6 +361,41 @@ def _format_embedding_history(entries: List[Dict[str, Any]]) -> List[Dict[str, A
         })
 
     return rows
+
+
+def _format_training_metrics(metrics: Dict[str, Any]) -> Dict[str, Any]:
+    """Format cluster training metrics for display."""
+    if not metrics:
+        return {
+            "n_samples": "0",
+            "n_clusters": "0",
+            "silhouette_score": "N/A",
+            "trained_at": "N/A",
+            "largest_cluster": "N/A",
+            "smallest_cluster": "N/A",
+            "avg_cluster_size": "N/A"
+        }
+
+    cluster_sizes = metrics.get("cluster_sizes", {})
+    if cluster_sizes:
+        sizes = list(cluster_sizes.values())
+        largest_cluster = max(sizes)
+        smallest_cluster = min(sizes)
+        avg_cluster_size = sum(sizes) / len(sizes)
+    else:
+        largest_cluster = 0
+        smallest_cluster = 0
+        avg_cluster_size = 0
+
+    return {
+        "n_samples": _format_number(metrics.get("n_samples", 0)),
+        "n_clusters": _format_number(metrics.get("n_clusters", 0)),
+        "silhouette_score": _format_float(metrics.get("silhouette_score"), decimals=4) if metrics.get("silhouette_score") else "N/A",
+        "trained_at": _format_timestamp(metrics.get("trained_at")),
+        "largest_cluster": _format_number(largest_cluster),
+        "smallest_cluster": _format_number(smallest_cluster),
+        "avg_cluster_size": _format_number(int(avg_cluster_size))
+    }
 
 
 def _format_cv_stats(stats: Dict[str, Any]) -> Dict[str, Any]:

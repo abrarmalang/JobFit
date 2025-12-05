@@ -1,11 +1,30 @@
 {
   "collection": {
     "status": "IDLE",
-    "updated_at": "2025-11-29T20:29:48.294231",
+    "updated_at": "2025-12-05T00:23:23.619966",
     "details": {
-      "mode": "remoteok",
-      "last_run": "2025-11-29T20:29:48.108298",
-      "jobs_collected": 0
+      "mode": "large-scale",
+      "profiles": 4,
+      "last_run": "2025-12-05T00:21:47.567318",
+      "jobs_collected": 13969,
+      "api_calls": 584,
+      "duration_minutes": 16.433564333333333
+    }
+  },
+  "processing": {
+    "status": "IDLE",
+    "updated_at": "2025-12-05T00:24:02.127091",
+    "details": {
+      "last_run": "2025-12-05T00:24:01.866649",
+      "records_out": 13969
+    }
+  },
+  "embedding": {
+    "status": "IDLE",
+    "updated_at": "2025-12-05T00:40:07.299670",
+    "details": {
+      "last_run": "2025-12-05T00:40:07.298657",
+      "jobs_processed": 13969
     }
   }
 }

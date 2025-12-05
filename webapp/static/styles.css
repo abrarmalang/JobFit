@@ -279,7 +279,6 @@ a:hover {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: gradientShift 3s ease infinite;
 }
 
 .glass-effect {

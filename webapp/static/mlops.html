@@ -45,10 +45,17 @@
             color: var(--color-charcoal);
             border-bottom: 2px solid var(--color-cloud);
         }
+        .data-table th:first-child {
+            width: 250px;
+        }
         .data-table td {
             padding: 1rem;
             border-bottom: 1px solid var(--color-cloud);
             color: var(--color-graphite);
+            text-align: left;
+        }
+        .data-table td:first-child {
+            width: 250px;
         }
         .data-table tr:hover {
             background: var(--color-ghost);
@@ -230,6 +237,35 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Cluster Training Metrics -->
+            <div class="feature-card" style="margin-bottom: 2rem; padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="material-icons" style="font-size: 2rem; color: var(--color-cosmic-purple);">hub</div>
+                    <h2 class="feature-title" style="margin: 0;">Job Clustering Model Metrics</h2>
+                </div>
+
+                <!-- Training Metrics Summary -->
+                <div id="training-metrics-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;">
+                    <!-- Metrics will be rendered here by SSR -->
+                    <div class="metric-box">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Jobs Clustered</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Number of Clusters</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">N/A</div>
+                        <div class="metric-label">Silhouette Score</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">N/A</div>
+                        <div class="metric-label">Last Trained</div>
+                    </div>
+                </div>
             </div>
 
             <!-- User CV Operations Statistics -->

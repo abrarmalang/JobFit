@@ -22,11 +22,12 @@ class CollectorBase(ABC):
         """
         if data_dir is None:
             # Auto-detect project root and use data/ folder
-            project_root = Path(__file__).parent.parent.parent.parent
-            data_dir = project_root / "data"
+            # Use resolve() for absolute path and parents[3] for clarity
+            self.data_dir = Path(__file__).resolve().parents[3] / "data"
+        else:
+            self.data_dir = data_dir
 
-        self.data_dir = data_dir
-        self.raw_dir = data_dir / "raw"
+        self.raw_dir = self.data_dir / "raw"
         self.raw_dir.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
@@ -52,30 +53,71 @@ class CollectorBase(ABC):
         """
         pass
 
-    def _save_raw_data(self, data: List[Dict], source_name: str, collection_time: datetime):
+    def save_raw_list(self, jobs: List[Dict], source: str, silent: bool = False):
         """
-        Save raw data to appropriate directory with timestamped filename.
+        Save a full list of jobs into a JSON file.
 
         Args:
-            data: List of job dictionaries to save
-            source_name: Name of the data source (e.g., 'adzuna', 'scraped')
-            collection_time: Timestamp of collection
+            jobs: List of job dictionaries to save
+            source: Name of the data source (e.g., 'adzuna', 'scraped')
+            silent: If True, don't print confirmation message
+
+        Returns:
+            Path to the saved file
         """
         import json
 
         # Create source-specific directory with date
-        date_str = collection_time.strftime('%Y-%m-%d')
-        source_dir = self.raw_dir / source_name / date_str
+        now = datetime.now()
+        date_str = now.strftime('%Y-%m-%d')
+        source_dir = self.raw_dir / source / date_str
         source_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate filename with timestamp
-        filename = f"jobs_{collection_time.strftime('%H%M%S')}.json"
+        filename = f"jobs_{now.strftime('%H%M%S')}.json"
         filepath = source_dir / filename
 
-        # Save as JSON
+        # Save as JSON (optimized: no indent for smaller files)
         with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+            json.dump(jobs, f, ensure_ascii=False)
 
-        print(f"✓ Saved {len(data)} jobs to {filepath}")
+        if not silent:
+            print(f"Saved {len(jobs)} jobs to {filepath}")
 
         return filepath
+
+    def save_raw_job(self, job: Dict):
+        """
+        Append a single structured job to a daily JSONL file.
+
+        Args:
+            job: Single job dictionary to save
+        """
+        import json
+
+        # Create source-specific directory with date
+        now = datetime.now()
+        date_str = now.strftime('%Y-%m-%d')
+        source = job.get('source', 'unknown')
+        source_dir = self.raw_dir / source / date_str
+        source_dir.mkdir(parents=True, exist_ok=True)
+
+        # Use daily JSONL file (one line per job)
+        filename = f"jobs_{date_str}.jsonl"
+        filepath = source_dir / filename
+
+        # Append to JSONL
+        with open(filepath, 'a', encoding='utf-8') as f:
+            json.dump(job, f, ensure_ascii=False)
+            f.write('\n')
+
+    def _save_raw_data(self, data: List[Dict], source_name: str, collection_time: datetime):
+        """
+        Legacy method - redirects to save_raw_list for compatibility.
+
+        Args:
+            data: List of job dictionaries to save
+            source_name: Name of the data source (e.g., 'adzuna', 'scraped')
+            collection_time: Timestamp of collection (not used, uses current time)
+        """
+        return self.save_raw_list(data, source_name)

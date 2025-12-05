@@ -22,6 +22,7 @@ def render_mlops_page(template_path: Path) -> str:
     _render_model_services(doc, context["model_services"])
     _render_embedding_stats(doc, context.get("embedding_stats", {}))
     _render_embedding_history(doc, context.get("embedding_history", []))
+    _render_training_metrics(doc, context.get("training_metrics", {}))
     _render_search_stats(doc, context.get("search_stats", {}))
     _render_search_history(doc, context.get("search_history", []))
 
@@ -100,14 +101,13 @@ def _render_model_services(doc, services: List[Dict]) -> None:
 
             # Service name column with icon
             td1 = etree.SubElement(tr, "td")
-            div = etree.SubElement(td1, "div")
-            div.set("style", "display: flex; align-items: center; gap: 0.5rem;")
-            icon = etree.SubElement(div, "span")
+            icon = etree.SubElement(td1, "span")
             icon.set("class", "material-icons")
-            icon.set("style", "color: var(--color-cosmic-purple);")
+            icon.set("style", "font-size: 1.25rem; vertical-align: middle; margin-right: 0.5rem;")
             icon.text = service["icon"]
-            strong = etree.SubElement(div, "strong")
-            strong.text = service["title"]
+            text_span = etree.SubElement(td1, "span")
+            text_span.set("style", "vertical-align: middle;")
+            text_span.text = service["title"]
 
             # Status badge column
             td2 = etree.SubElement(tr, "td")
@@ -121,9 +121,7 @@ def _render_model_services(doc, services: List[Dict]) -> None:
 
             # Models column
             td3 = etree.SubElement(tr, "td")
-            code = etree.SubElement(td3, "code")
-            code.set("style", "font-size: 0.875rem;")
-            code.text = service["models"]
+            td3.text = service["models"]
 
             # Response time column (placeholder)
             td4 = etree.SubElement(tr, "td")
@@ -216,5 +214,31 @@ def _render_embedding_history(doc, history: List[Dict]) -> None:
             td6.text = entry["completed"]
 
             tbody.append(tr)
+    except KeyError:
+        pass
+
+
+def _render_training_metrics(doc, metrics: Dict) -> None:
+    """Render cluster training metrics summary cards."""
+    try:
+        container = doc.get_element_by_id("training-metrics-summary")
+        container.clear()
+
+        cards = [
+            {"label": "Jobs Clustered", "value": metrics.get("n_samples", "0")},
+            {"label": "Number of Clusters", "value": metrics.get("n_clusters", "0")},
+            {"label": "Silhouette Score", "value": metrics.get("silhouette_score", "N/A")},
+            {"label": "Avg Cluster Size", "value": metrics.get("avg_cluster_size", "N/A")},
+            {"label": "Largest Cluster", "value": metrics.get("largest_cluster", "N/A")},
+            {"label": "Last Trained", "value": metrics.get("trained_at", "N/A")},
+        ]
+
+        for card in cards:
+            metric_box = etree.Element("div", attrib={"class": "metric-box"})
+            value_div = etree.SubElement(metric_box, "div", attrib={"class": "metric-value"})
+            value_div.text = card["value"]
+            label_div = etree.SubElement(metric_box, "div", attrib={"class": "metric-label"})
+            label_div.text = card["label"]
+            container.append(metric_box)
     except KeyError:
         pass

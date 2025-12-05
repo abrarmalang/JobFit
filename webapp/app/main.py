@@ -18,6 +18,12 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import PyPDF2
 from docx import Document
+from functools import lru_cache
+from typing import Optional
+
+from fastapi.responses import HTMLResponse, JSONResponse
+from .recommendation_engine import RecommendationEngine
+
 
 # Add src directory to path for uniform imports
 project_root = Path(__file__).parent.parent.parent
@@ -78,12 +84,43 @@ app = FastAPI(
     version="0.1.0"
 )
 
+@lru_cache(maxsize=1)
+def get_recommendation_engine() -> RecommendationEngine:
+    """
+    Lazily initialize and cache the RecommendationEngine.
+    The engine loads:
+      - job_cluster_model.pkl
+      - job_clusters.parquet
+    from models/trained/
+    """
+    return RecommendationEngine()
+
+
+@app.post("/api/recommend", response_class=JSONResponse)
+async def recommend_jobs(
+    cv_text: str = Body(..., embed=True),
+    top_n: Optional[int] = Query(10, ge=1, le=50),
+):
+    """
+    Recommend jobs for the given CV text.
+    - cv_text: raw CV text from the user
+    - top_n: how many jobs to return (dynamic, default = 10, max = 50)
+    """
+    try:
+        engine = get_recommendation_engine()
+        results = engine.recommend(cv_text=cv_text, top_n=top_n)
+        return {"results": results, "count": len(results), "top_n": top_n}
+    except Exception as e:
+        logging.exception("Error during job recommendation")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Path to static files
 STATIC_DIR = Path(__file__).parent.parent / "static"
 DATAOPS_TEMPLATE = STATIC_DIR / "dataops.html"
 MLOPS_TEMPLATE = STATIC_DIR / "mlops.html"
 CVREVIEW_TEMPLATE = STATIC_DIR / "cvreview.html"
-SEARCH_HISTORY_LOG = get_settings().models_dir / "embeddings" / "metrics" / "search_history.jsonl"
+SEARCH_HISTORY_LOG = get_settings().models_dir / "metrics" / "search_history.jsonl"
 
 
 # Mount static files for CSS, JS, images, etc.
@@ -262,28 +299,58 @@ async def api_keyword_search(
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100)
 ):
-    """API endpoint for keyword search"""
+    """
+    API endpoint for job search using the trained recommendation model.
+
+    We treat (keywords + location + skills) as a free-text profile,
+    embed it, route it through the cluster model, and then rank jobs
+    inside the best-matching cluster.
+    """
     start_time = time.time()
     query_params = {"keywords": keywords, "location": location, "skills": skills}
-    
-    search_client = get_search_client()
+
+    # If nothing entered, return empty instead of "all jobs"
+    if not (keywords or location or skills):
+        duration = time.time() - start_time
+        log_search_event("keyword", duration, query_params, 0, status="success")
+        return {"results": [], "total_results": 0}
+
+    # Build a single text query for the recommender
+    parts = []
+    if keywords:
+        parts.append(f"Job: {keywords}")
+    if location:
+        parts.append(f"Location: {location}")
+    if skills:
+        parts.append(f"Skills: {skills}")
+    query_text = " | ".join(parts)
 
     try:
-        data = search_client.keyword_search(
-            query=keywords,
-            location=location,
-            skills=skills,
-            page=page,
-            page_size=page_size
-        )
-        data = sanitize_search_payload(data)
+        engine = get_recommendation_engine()
+
+        # Ask for enough results to cover pagination
+        top_n = page * page_size
+        all_results, total_in_cluster = engine.recommend(cv_text=query_text, top_n=top_n, return_total=True)
+
+        # Paginate in memory
+        start_index = (page - 1) * page_size
+        end_index = start_index + page_size
+        paginated = all_results[start_index:end_index]
+
+        payload = {
+            "results": paginated,
+            "total_results": total_in_cluster  # Total jobs in cluster, not just returned
+        }
+
         duration = time.time() - start_time
-        log_search_event("keyword", duration, query_params, data['total_results'])
-        return data
+        log_search_event("keyword", duration, query_params, total_in_cluster)
+        return payload
+
     except Exception as e:
         duration = time.time() - start_time
         log_search_event("keyword", duration, query_params, 0, status="error")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.post("/api/search/semantic")
