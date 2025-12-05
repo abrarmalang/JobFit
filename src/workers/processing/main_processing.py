@@ -41,6 +41,12 @@ def main():
     if result['status'] == 'success':
         print(f"\n✓ Processing complete!")
         print(f"Output file: {result['output_path']}")
+        print(f"\n{'='*80}")
+        print(f"NEXT STEPS")
+        print(f"{'='*80}")
+        print(f"1. Generate embeddings:  python src/workers/embeddings/generator.py")
+        print(f"2. Train cluster model:  python src/workers/model_training/train_cluster_model.py")
+        print(f"{'='*80}\n")
     else:
         print(f"\n✗ No data to process")
 

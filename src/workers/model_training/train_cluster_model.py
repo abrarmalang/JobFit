@@ -18,6 +18,11 @@ Usage:
 import os
 from pathlib import Path
 from typing import Tuple, Any, List
+import sys
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from src.shared.parquet_utils import save_parquet_chunked, load_parquet_chunked
 
 import numpy as np
 import pandas as pd
@@ -103,14 +108,11 @@ class JobClusterTrainer:
 
     def load_embeddings(self) -> Tuple[pd.DataFrame, np.ndarray]:
         """Load the embeddings parquet and extract feature matrix."""
-        if not self.embeddings_path.exists():
-            raise FileNotFoundError(
-                f"❌ Embeddings file not found: {self.embeddings_path}\n"
-                "   Make sure you ran: python scripts/run_generate_embeddings.py"
-            )
+        # Note: load_parquet_chunked handles both single files and chunked files
+        # It will check if the file exists or if chunked parts exist
 
         print(f"\n📄 Loading embeddings from: {self.embeddings_path}")
-        df = pd.read_parquet(self.embeddings_path)
+        df = load_parquet_chunked(self.embeddings_path)
         print(f"   → Loaded {len(df)} rows and {len(df.columns)} columns")
 
         X = self._detect_embedding_matrix(df)
@@ -186,11 +188,11 @@ class JobClusterTrainer:
         metrics: dict,
     ) -> None:
         """Save clustered data, model, and metrics to disk with fixed filenames."""
-        # 1. Save clustered jobs table
+        # 1. Save clustered jobs table (chunked if needed for GitHub)
         df_clustered = df.copy()
         df_clustered["cluster_id"] = labels.astype(int)
         clustered_path = self.output_dir / "job_clusters.parquet"
-        df_clustered.to_parquet(clustered_path, index=False)
+        save_parquet_chunked(df_clustered, clustered_path, index=False)
 
         # 2. Save model
         model_path = self.output_dir / "job_cluster_model.pkl"

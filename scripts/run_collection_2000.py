@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """
-Run Large-Scale Data Collection
+Run 2000 Job Collection
 
-Collects 15,000+ jobs from Adzuna API across multiple countries and profiles.
+Collects 2000 jobs from Adzuna API across multiple countries.
 Includes rate limiting, delays, and automatic retry on 429 errors.
 
 Usage:
-    python scripts/run_collection_large.py
+    python scripts/run_collection_2000.py
 """
 
 import sys
@@ -27,54 +27,52 @@ from workers.metrics import (
 )
 
 
-# Large-scale collection profiles
-# Designed to collect ~15,000 jobs organically across countries
-# No keyword filtering - just broad IT jobs for natural diversity
-LARGE_COLLECTION_PROFILES = [
-    # UK - Main volume (no category filter for maximum diversity)
+# Collection profiles for 2000 jobs total
+COLLECTION_PROFILES_2000 = [
+    # UK - Main volume
     {
         "name": "UK - All Jobs",
         "country": "gb",
         "what": "",
         "category": None,
-        "max_jobs": 6000,
+        "max_jobs": 800,
         "max_days_old": 60,
     },
 
-    # US - Large market (no category filter for maximum diversity)
+    # US - Large market
     {
         "name": "US - All Jobs",
         "country": "us",
         "what": "",
         "category": None,
-        "max_jobs": 4000,
+        "max_jobs": 600,
         "max_days_old": 60,
     },
 
-    # Australia (no category filter for maximum diversity)
+    # Australia
     {
         "name": "AU - All Jobs",
         "country": "au",
         "what": "",
         "category": None,
-        "max_jobs": 2500,
+        "max_jobs": 400,
         "max_days_old": 60,
     },
 
-    # Canada (no category filter for maximum diversity)
+    # Canada
     {
         "name": "CA - All Jobs",
         "country": "ca",
         "what": "",
         "category": None,
-        "max_jobs": 2500,
+        "max_jobs": 200,
         "max_days_old": 60,
     },
 ]
 
 
 def main():
-    """Run large-scale data collection with rate limiting."""
+    """Run 2000 job collection with rate limiting."""
 
     # Load config for API credentials
     config = load_config()
@@ -92,32 +90,32 @@ def main():
         "collection",
         "RUNNING",
         {
-            "mode": "large-scale",
-            "profiles": len(LARGE_COLLECTION_PROFILES),
-            "target_jobs": sum(p["max_jobs"] for p in LARGE_COLLECTION_PROFILES),
+            "mode": "2000-jobs",
+            "profiles": len(COLLECTION_PROFILES_2000),
+            "target_jobs": sum(p["max_jobs"] for p in COLLECTION_PROFILES_2000),
             "started_at": datetime.now().isoformat()
         }
     )
 
-    # Initialize collector with settings optimized for large collections
+    # Initialize collector
     collector = AdzunaCollector(
         app_id=adzuna_config.app_id,
         app_key=adzuna_config.app_key,
-        max_pages=400,          # Increased from 200 to support larger collections
+        max_pages=100,          # Sufficient for 2000 jobs
         max_workers=1,          # Single worker to avoid rate limits
-        batch_save_size=1000    # Save every 1000 jobs (incremental saves for crash recovery)
+        batch_save_size=500     # Save every 500 jobs
     )
 
     print(f"\n{'='*80}")
-    print(f"LARGE-SCALE DATA COLLECTION")
+    print(f"2000 JOB COLLECTION")
     print(f"{'='*80}")
-    print(f"Target: ~{sum(p['max_jobs'] for p in LARGE_COLLECTION_PROFILES):,} jobs")
-    print(f"Profiles: {len(LARGE_COLLECTION_PROFILES)}")
-    print(f"Max pages per profile: 400")
+    print(f"Target: ~{sum(p['max_jobs'] for p in COLLECTION_PROFILES_2000):,} jobs")
+    print(f"Profiles: {len(COLLECTION_PROFILES_2000)}")
+    print(f"Max pages per profile: 100")
     print(f"Concurrent workers: 1 (sequential to avoid rate limits)")
-    print(f"Batch save size: 1000 jobs (incremental saves)")
+    print(f"Batch save size: 500 jobs")
     print(f"Results per page: {adzuna_config.results_per_page}")
-    print(f"\nThis will take approximately 30-45 minutes depending on API response times.")
+    print(f"\nThis will take approximately 10-15 minutes depending on API response times.")
     print(f"Progress will be shown after each profile.\n")
 
     total_jobs_collected = 0
@@ -128,9 +126,9 @@ def main():
     # Run collection for each profile
     last_timestamp = None
 
-    for i, profile in enumerate(LARGE_COLLECTION_PROFILES, 1):
+    for i, profile in enumerate(COLLECTION_PROFILES_2000, 1):
         print(f"\n{'='*80}")
-        print(f"[{i}/{len(LARGE_COLLECTION_PROFILES)}] {profile['name']}")
+        print(f"[{i}/{len(COLLECTION_PROFILES_2000)}] {profile['name']}")
         print(f"{'='*80}")
         print(f"Target: {profile['max_jobs']:,} jobs | Max days: {profile['max_days_old']}")
 
@@ -188,7 +186,7 @@ def main():
 
             # Add delay between profiles to avoid rate limiting
             # Skip delay after last profile
-            if i < len(LARGE_COLLECTION_PROFILES):
+            if i < len(COLLECTION_PROFILES_2000):
                 delay_seconds = 5
                 print(f"\n⏸  Waiting {delay_seconds}s before next profile (rate limit protection)...")
                 time.sleep(delay_seconds)
@@ -231,7 +229,7 @@ def main():
     print(f"Total Unique Jobs: {total_jobs_collected:,}")
     print(f"Total API Calls: {total_api_calls}")
     print(f"Total Duration: {total_duration / 60:.1f} minutes")
-    print(f"Avg Time per Profile: {total_duration / len(LARGE_COLLECTION_PROFILES):.1f}s")
+    print(f"Avg Time per Profile: {total_duration / len(COLLECTION_PROFILES_2000):.1f}s")
     print(f"Data Directory: {stats['raw_data_directory']}")
 
     print(f"\n{'='*80}")
@@ -246,8 +244,8 @@ def main():
         "collection",
         "IDLE",
         {
-            "mode": "large-scale",
-            "profiles": len(LARGE_COLLECTION_PROFILES),
+            "mode": "2000-jobs",
+            "profiles": len(COLLECTION_PROFILES_2000),
             "last_run": last_timestamp,
             "jobs_collected": total_jobs_collected,
             "api_calls": total_api_calls,

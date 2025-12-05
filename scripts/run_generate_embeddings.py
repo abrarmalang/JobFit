@@ -54,10 +54,11 @@ def main():
     print(f"  Jobs: {result['num_jobs']}")
     print(f"  Total embeddings: {result['total_embeddings']}")
     print(f"  Output: {result['output_path']}")
-    print(f"\nNext steps:")
-    print(f"  - Use embeddings for semantic job search")
-    print(f"  - Run CV matching against job embeddings")
-    print(f"  - Test search quality with diverse queries\n")
+    print(f"\n{'='*80}")
+    print(f"NEXT STEPS")
+    print(f"{'='*80}")
+    print(f"1. Train cluster model:  python src/workers/model_training/train_cluster_model.py")
+    print(f"{'='*80}\n")
 
     return result
 

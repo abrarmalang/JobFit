@@ -13,6 +13,11 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import sys
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from src.shared.parquet_utils import save_parquet_chunked
 
 PARQUET_WRITE_KWARGS = {
     "index": False,
@@ -21,8 +26,14 @@ PARQUET_WRITE_KWARGS = {
     "use_dictionary": True
 }
 
-from .embedder_base import EmbedderBase
-from .embedder_sentencetransformer import SentenceTransformerEmbedder
+# Handle both direct execution and module import
+try:
+    from .embedder_base import EmbedderBase
+    from .embedder_sentencetransformer import SentenceTransformerEmbedder
+except ImportError:
+    # Running as script, use absolute imports
+    from src.workers.embeddings.embedder_base import EmbedderBase
+    from src.workers.embeddings.embedder_sentencetransformer import SentenceTransformerEmbedder
 
 # Import metrics functions (optional)
 try:
@@ -189,9 +200,9 @@ class JobEmbeddingGenerator:
             'embedding_category_title': list(category_title_embeddings)
         })
 
-        # Save embeddings dataframe
+        # Save embeddings dataframe (chunked if needed for GitHub)
         output_path = self.embeddings_dir / "jobs.parquet"
-        embeddings_df.to_parquet(output_path, **PARQUET_WRITE_KWARGS)
+        save_parquet_chunked(embeddings_df, output_path, **PARQUET_WRITE_KWARGS)
 
         # Create README
         self._create_readme(
@@ -337,3 +348,28 @@ For now, use title and full description embeddings as baseline.
 
         with open(readme_path, 'w') as f:
             f.write(content)
+
+
+if __name__ == "__main__":
+    """Run embedding generation when executed as script."""
+    print("Starting embedding generation...")
+
+    # Initialize embedder
+    embedder = SentenceTransformerEmbedder(model_name="all-mpnet-base-v2")
+
+    # Initialize generator
+    generator = JobEmbeddingGenerator(embedder=embedder)
+
+    # Generate embeddings
+    stats = generator.generate_embeddings(
+        batch_size=32,
+        show_progress=True
+    )
+
+    print(f"\n✅ Embedding generation complete!")
+    print(f"   Output: {stats['output_path']}")
+    print(f"\n{'='*80}")
+    print(f"NEXT STEPS")
+    print(f"{'='*80}")
+    print(f"1. Train cluster model:  python src/workers/model_training/train_cluster_model.py")
+    print(f"{'='*80}\n")

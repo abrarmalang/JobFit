@@ -12,6 +12,11 @@ Provides:
 
 from pathlib import Path
 from typing import List, Dict, Any, Union
+import sys
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from src.shared.parquet_utils import load_parquet_chunked
 
 import joblib
 import numpy as np
@@ -66,7 +71,7 @@ class RecommendationEngine:
         self.cluster_model = joblib.load(model_path)
 
         print(f"📄 Loading clustered jobs: {clusters_path}")
-        self.jobs_df = pd.read_parquet(clusters_path)
+        self.jobs_df = load_parquet_chunked(clusters_path)
 
         # 2. Decide which columns to use for embeddings and cluster id
         self.embedding_col = self._detect_embedding_column(self.jobs_df)
