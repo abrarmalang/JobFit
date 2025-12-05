@@ -319,11 +319,10 @@ async def api_keyword_search(
     page_size: int = Query(10, ge=1, le=100)
 ):
     """
-    API endpoint for job search using Groq API.
+    API endpoint for keyword-based job search.
 
-    TEMPORARY: Using simple keyword filtering until Groq integration is complete.
-    Previously used RecommendationEngine but it requires sentence-transformers (~300MB+ RAM)
-    which exceeds Render free tier 512MB limit.
+    Uses simple text matching on job titles and descriptions.
+    Does not require sentence-transformers, suitable for low-memory deployments.
     """
     start_time = time.time()
     query_params = {"keywords": keywords, "location": location, "skills": skills}
@@ -334,14 +333,26 @@ async def api_keyword_search(
         log_search_event("keyword", duration, query_params, 0, status="success")
         return {"results": [], "total_results": 0}
 
-    # TODO: Implement Groq-based job matching
-    # For now, return a message indicating the feature is being updated
-    duration = time.time() - start_time
-    log_search_event("keyword", duration, query_params, 0, status="disabled")
-    raise HTTPException(
-        status_code=503,
-        detail="Job search temporarily disabled. Switching to Groq API to reduce memory usage. Please check back soon!"
-    )
+    try:
+        search_client = get_search_client()
+        data = search_client.keyword_search(
+            query=keywords or "",
+            location=location or "",
+            skills=skills or "",
+            page=page,
+            page_size=page_size
+        )
+        data = sanitize_search_payload(data)
+
+        duration = time.time() - start_time
+        log_search_event("keyword", duration, query_params, data["total_results"])
+        return data
+
+    except Exception as e:
+        duration = time.time() - start_time
+        log_search_event("keyword", duration, query_params, 0, status="error")
+        logging.exception("Error during keyword search")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
