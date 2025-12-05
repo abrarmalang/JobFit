@@ -68,8 +68,8 @@ class EmbeddingConfig(BaseSettings):
     """Embedding model configuration."""
 
     model_name: str = Field(
-        default="all-mpnet-base-v2",
-        description="Sentence transformer model name"
+        default="all-MiniLM-L6-v2",
+        description="Sentence transformer model name (all-MiniLM-L6-v2: 80MB, fast | all-mpnet-base-v2: 420MB, better quality)"
     )
     device: str = Field(
         default="cpu",

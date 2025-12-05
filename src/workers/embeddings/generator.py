@@ -354,15 +354,26 @@ if __name__ == "__main__":
     """Run embedding generation when executed as script."""
     print("Starting embedding generation...")
 
+    # Load config to get model settings
+    try:
+        from src.shared.config import load_config
+        config = load_config()
+        model_name = config.embedding.model_name
+        batch_size = config.embedding.batch_size
+    except ImportError:
+        # Fallback if config not available
+        model_name = "all-MiniLM-L6-v2"
+        batch_size = 32
+
     # Initialize embedder
-    embedder = SentenceTransformerEmbedder(model_name="all-mpnet-base-v2")
+    embedder = SentenceTransformerEmbedder(model_name=model_name)
 
     # Initialize generator
     generator = JobEmbeddingGenerator(embedder=embedder)
 
     # Generate embeddings
     stats = generator.generate_embeddings(
-        batch_size=32,
+        batch_size=batch_size,
         show_progress=True
     )
 

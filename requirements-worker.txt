@@ -1,5 +1,10 @@
 # Worker-specific dependencies
 # For data collection, processing, embeddings, and model training
+#
+# Expected installation size: ~1.2GB
+# - PyTorch: ~700MB (required by sentence-transformers)
+# - sentence-transformers models: ~80MB (all-MiniLM-L6-v2)
+# - Other dependencies: ~400MB
 
 # Data Processing
 pandas==2.2.2
@@ -10,13 +15,12 @@ numpy>=1.26.0,<2.0.0
 requests==2.31.0
 
 # Machine Learning & Embeddings
+# Note: sentence-transformers automatically installs PyTorch (~700MB)
+# Default model: all-MiniLM-L6-v2 (80MB, 384 dims, fast)
+# Alternative: all-mpnet-base-v2 (420MB, 768 dims, better quality)
 sentence-transformers>=2.2.2
 scikit-learn>=1.3.2
 joblib==1.3.2
-
-# PyTorch (CPU-only for workers)
-# Note: Install with: pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
-torch==2.2.2
 
 # Environment Variables & Configuration
 python-dotenv==1.0.0

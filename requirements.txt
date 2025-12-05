@@ -1,5 +1,10 @@
 # Web Application Dependencies
 # For FastAPI server, CV parsing, and job recommendations
+#
+# Expected installation size: ~1.2GB
+# - PyTorch: ~700MB (required by sentence-transformers)
+# - sentence-transformers models: ~80MB (all-MiniLM-L6-v2)
+# - Other dependencies: ~400MB
 
 # Web Framework
 fastapi==0.104.1
@@ -27,10 +32,12 @@ pydantic==2.5.0
 pydantic-settings==2.1.0
 
 # ML for Recommendations & Search
+# Note: sentence-transformers automatically installs PyTorch (~700MB)
+# Default model: all-MiniLM-L6-v2 (80MB, 384 dims, fast)
+# Runtime memory: ~200-300MB with default model
 sentence-transformers>=2.2.2
 scikit-learn==1.4.0
 joblib==1.3.2
-torch==2.2.2
 
 # Visualization (CV radar charts)
 matplotlib==3.8.2

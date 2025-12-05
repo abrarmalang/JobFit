@@ -29,7 +29,7 @@ class RecommendationEngine:
     def __init__(
         self,
         models_dir: str = "models/trained",
-        embedding_model_name: str = "all-mpnet-base-v2",
+        embedding_model_name: str = None,
     ) -> None:
         """
         Initialize engine by loading:
@@ -43,6 +43,16 @@ class RecommendationEngine:
           - job_cluster_model_<timestamp>.pkl
           - job_clusters_<timestamp>.parquet
         """
+        # Load model name from config if not provided
+        if embedding_model_name is None:
+            try:
+                from src.shared.config import load_config
+                config = load_config()
+                embedding_model_name = config.embedding.model_name
+            except Exception:
+                # Fallback to default if config fails
+                embedding_model_name = "all-MiniLM-L6-v2"
+
         models_dir_path = Path(models_dir)
         if not models_dir_path.exists():
             raise FileNotFoundError(
